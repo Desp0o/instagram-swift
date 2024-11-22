@@ -51,6 +51,9 @@ class LoginVC: UIViewController {
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 5
         button.backgroundColor = .customBlue
+        button.addAction(UIAction(handler: { [weak self] action in
+            self?.loginTapped()
+        }), for: .touchUpInside)
         return button
     }()
     private lazy var leftThinLine: UIView = {
@@ -101,6 +104,8 @@ class LoginVC: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         return button
     }()
+    
+    private let viewModel = LoginViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -180,6 +185,17 @@ class LoginVC: UIViewController {
             signupButton.leftAnchor.constraint(equalTo: signupLabel.rightAnchor, constant: 10)
             
         ])
+    }
+    
+    private func loginTapped() {
+        guard let username = usernameTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        
+        if viewModel.handleLogin(username: username, password: password) {
+            
+            let feedVC = FeedVC()
+            navigationController?.pushViewController(feedVC, animated: true)
+        }
     }
 }
 

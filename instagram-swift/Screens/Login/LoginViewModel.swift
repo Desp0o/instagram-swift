@@ -10,12 +10,14 @@ import UIKit
 
 class LoginViewModel {
     
-    private let usernameKey = "user123"
-    private let passwordKey = "pass123"
+    private let user = "Nick14"
+    private let userPassword = "Ilovemc"
+    
+    private let usernameKey = "testuser"
+    private let passwordKey = "testPass"
     
     var username: String?
     var password: String?
-    var confirmPassword: String?
     var isLoggedIn: Bool {
         return UserDefaults.standard.bool(forKey: "isLoggedIn")
     }
@@ -36,11 +38,12 @@ class LoginViewModel {
         }
     }
 
-    func handleLogin(username: String, password: String, confirmPassword: String) -> Bool {
-        guard password == confirmPassword else {
+    func handleLogin(username: String, password: String) -> Bool {
+        if username == user && password == userPassword {
+            saveCredentials(username: username, password: password)
+            return true
+        } else {
             return false
         }
-        saveCredentials(username: username, password: password)
-        return true
     }
 }
