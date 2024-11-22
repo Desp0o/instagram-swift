@@ -16,6 +16,16 @@ class LoginVC: UIViewController {
         label.font = UIFont(name: "SnellRoundhand", size: 50)
         return label
     }()
+    
+    private lazy var usernameTextField: UITextField = {
+        let textField = UITextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.backgroundColor = .customGray
+        textField.placeholder = "phone number, username or email address"
+        textField.font = UIFont.systemFont(ofSize: 14)
+        textField.textAlignment = .center
+        return textField
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,11 +38,20 @@ class LoginVC: UIViewController {
     
     private func setupConstraints() {
         view.addSubview(instagramLabel)
+        view.addSubview(usernameTextField)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            instagramLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 20)
+            instagramLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 20),
+             
+            usernameTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
+            usernameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
+            usernameTextField.topAnchor.constraint(equalTo: instagramLabel.bottomAnchor, constant: 30),
+            usernameTextField.heightAnchor.constraint(equalToConstant: 50),
+            
+            
         ])
+        
     }
 }
 
