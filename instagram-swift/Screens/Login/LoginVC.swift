@@ -82,6 +82,25 @@ class LoginVC: UIViewController {
         button.setTitleColor(.customBlue, for: .normal)
         return button
     }()
+    private lazy var divider: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray3
+        return view
+    }()
+    private lazy var signupLabel: UILabel = {
+        let label = UILabel()
+        label.configureCustomText(text: "Don't have an account?", color: .systemGray2, isBold: false, size: 14)
+        return label
+    }()
+    private lazy var signupButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Sign up", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(.customBlue, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,6 +121,9 @@ class LoginVC: UIViewController {
         view.addSubview(righThinLine)
         view.addSubview(orLabel)
         view.addSubview(facebookLoginButton)
+        view.addSubview(divider)
+        view.addSubview(signupLabel)
+        view.addSubview(signupButton)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -139,7 +161,19 @@ class LoginVC: UIViewController {
             righThinLine.heightAnchor.constraint(equalTo: leftThinLine.heightAnchor),
             
             facebookLoginButton.topAnchor.constraint(equalTo: orLabel.bottomAnchor, constant: 60),
-            facebookLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            facebookLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            divider.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
+            divider.leftAnchor.constraint(equalTo: view.leftAnchor),
+            divider.rightAnchor.constraint(equalTo: view.rightAnchor),
+            divider.heightAnchor.constraint(equalToConstant: 2),
+            
+            signupLabel.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: 20),
+            signupLabel.leftAnchor.constraint(equalTo: facebookLoginButton.leftAnchor),
+            
+            signupButton.centerYAnchor.constraint(equalTo: signupLabel.centerYAnchor),
+            signupButton.leftAnchor.constraint(equalTo: signupLabel.rightAnchor, constant: 10)
+            
         ])
     }
 }
