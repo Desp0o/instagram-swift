@@ -16,7 +16,6 @@ class LoginVC: UIViewController {
         label.font = UIFont(name: "SnellRoundhand", size: 50)
         return label
     }()
-    
     private lazy var usernameTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -27,7 +26,6 @@ class LoginVC: UIViewController {
         textField.layer.cornerRadius = 5
         return textField
     }()
-    
     private lazy var passwordTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -38,13 +36,21 @@ class LoginVC: UIViewController {
         textField.layer.cornerRadius = 5
         return textField
     }()
-    
     private lazy var forgottenPasswordbutton: UIButton = {
         let button = UIButton()
         button.setTitle("Forgotten password ?", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(.customBlue, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .heavy)
+        return button
+    }()
+    private lazy var loginButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Log in", for: .normal)
+        button.titleLabel?.textAlignment = .center
+        button.layer.cornerRadius = 5
+        button.backgroundColor = .customBlue
         return button
     }()
 
@@ -62,6 +68,7 @@ class LoginVC: UIViewController {
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
         view.addSubview(forgottenPasswordbutton)
+        view.addSubview(loginButton)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -78,7 +85,12 @@ class LoginVC: UIViewController {
             passwordTextField.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor),
             
             forgottenPasswordbutton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 20),
-            forgottenPasswordbutton.rightAnchor.constraint(equalTo: passwordTextField.rightAnchor)
+            forgottenPasswordbutton.rightAnchor.constraint(equalTo: passwordTextField.rightAnchor),
+            
+            loginButton.leftAnchor.constraint(equalTo: usernameTextField.leftAnchor),
+            loginButton.rightAnchor.constraint(equalTo: usernameTextField.rightAnchor),
+            loginButton.topAnchor.constraint(equalTo: forgottenPasswordbutton.bottomAnchor, constant: 20),
+            loginButton.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor)
         ])
     }
 }
