@@ -183,7 +183,6 @@ class LoginVC: UIViewController {
             
             signupButton.centerYAnchor.constraint(equalTo: signupLabel.centerYAnchor),
             signupButton.leftAnchor.constraint(equalTo: signupLabel.rightAnchor, constant: 10)
-            
         ])
     }
     
@@ -192,11 +191,27 @@ class LoginVC: UIViewController {
         guard let password = passwordTextField.text else { return }
         
         if viewModel.handleLogin(username: username, password: password) {
-            
             let feedVC = FeedVC()
             navigationController?.pushViewController(feedVC, animated: true)
+        } else {
+            showAlert()
         }
     }
+    
+    private func showAlert() {
+        let ac = UIAlertController(title: "Incorrect username or password", message: "", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Try again", style: .default, handler: { [weak self] action in
+            self?.resetCredentials()
+        }))
+        present(ac, animated: true)
+        
+    }
+    
+    private func resetCredentials() {
+        usernameTextField.text = ""
+        passwordTextField.text = ""
+    }
+    
 }
 
 

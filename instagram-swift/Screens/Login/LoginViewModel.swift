@@ -37,7 +37,7 @@ class LoginViewModel {
             password = String(data: passwordData, encoding: .utf8)
         }
     }
-
+    
     func handleLogin(username: String, password: String) -> Bool {
         if username == user && password == userPassword {
             saveCredentials(username: username, password: password)
