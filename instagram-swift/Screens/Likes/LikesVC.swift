@@ -12,5 +12,6 @@ class LikesVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = .taggedBlue
     }
 }

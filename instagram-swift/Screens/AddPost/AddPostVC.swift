@@ -1,5 +1,5 @@
 //
-//  SettingsVC.swift
+//  AddPostViewController.swift
 //  instagram-swift
 //
 //  Created by Despo on 22.11.24.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-class SettingsVC: UIViewController {
+class AddPostVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .systemTeal
+        
+        view.backgroundColor = .yellow
     }
 }
