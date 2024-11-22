@@ -38,6 +38,15 @@ class LoginVC: UIViewController {
         textField.layer.cornerRadius = 5
         return textField
     }()
+    
+    private lazy var forgottenPasswordbutton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Forgotten password ?", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(.customBlue, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .heavy)
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +61,7 @@ class LoginVC: UIViewController {
         view.addSubview(instagramLabel)
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
+        view.addSubview(forgottenPasswordbutton)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -65,10 +75,11 @@ class LoginVC: UIViewController {
             passwordTextField.leftAnchor.constraint(equalTo: usernameTextField.leftAnchor),
             passwordTextField.rightAnchor.constraint(equalTo: usernameTextField.rightAnchor),
             passwordTextField.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 20),
-            passwordTextField.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor)
+            passwordTextField.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor),
             
+            forgottenPasswordbutton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 20),
+            forgottenPasswordbutton.rightAnchor.constraint(equalTo: passwordTextField.rightAnchor)
         ])
-        
     }
 }
 
