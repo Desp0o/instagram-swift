@@ -12,6 +12,12 @@ class AddPostVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .yellow
+        setupUI()
     }
+    
+    private func setupUI() {
+        view.backgroundColor = .white
+        navigationController?.isNavigationBarHidden = true
+    }
+
 }

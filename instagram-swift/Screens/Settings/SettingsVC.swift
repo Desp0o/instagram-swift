@@ -12,6 +12,10 @@ class SettingsVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemTeal
+        setupUI()
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .red
     }
 }

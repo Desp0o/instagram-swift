@@ -13,8 +13,18 @@ class LoginVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .taggedBlue
         
+        setupUI()
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .taggedBlue
+        navigationController?.isNavigationBarHidden = true
+        
+        setupButton()
+    }
+    
+    private func setupButton() {
         button.setTitle("go to feed", for: .normal)
         button.addAction(UIAction(handler: { [weak self] _ in
             self?.handleLogin()
@@ -26,8 +36,6 @@ class LoginVC: UIViewController {
             button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-        
-        
     }
     
     private func handleLogin() {
