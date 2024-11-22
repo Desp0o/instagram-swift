@@ -7,12 +7,25 @@
 
 import NetworkManagerFramework
 import izziDateFormatter
+import Foundation
+
+protocol FeedViewModelDelegate: AnyObject {
+    func didFinishFetchingData()
+}
+
+protocol CustomiewModelDelegate: AnyObject {
+    func didFinishFetchingData()
+}
 
 final class FeedViewModel {
     private let networkService: NetworkServiceProtocol
     private let dateFormatter: IzziDateFormatterProtocol
     var allPostsData: [PostModel] = []
     var singlePost: PostModel?
+    
+    weak var delegate: FeedViewModelDelegate?
+    weak var customDelegate: CustomiewModelDelegate?
+
     
     init(networkService: NetworkServiceProtocol = NetworkService(), dateFormatter: IzziDateFormatterProtocol = IzziDateFormatter()) {
         self.networkService = networkService
@@ -42,7 +55,11 @@ final class FeedViewModel {
                 }
                 
                 allPostsData = formatedData
-                print(allPostsData)
+                DispatchQueue.main.async {[weak self] in
+                    self?.delegate?.didFinishFetchingData()
+                    self?.customDelegate?.didFinishFetchingData()
+                }
+                
             } catch NetworkError.httpResponseError {
                 print("Response is not HTTPURLResponse or missing")
             } catch NetworkError.invalidURL {
@@ -59,8 +76,16 @@ final class FeedViewModel {
         }
     }
     
-    func singlePost(with index: Int) -> PostModel {
-        allPostsData[index]
+    var count: Int {
+        allPostsData.count
+    }
+    
+    func singlePost(with index: Int) -> PostModel? {
+        guard index >= 0 && index < allPostsData.count else {
+            print("Index \(index) is out of range")
+            return nil
+        }
+        return allPostsData[index]
     }
 }
 
