@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		E324810B2CF0654E00575547 /* NetworkManagerFramework in Frameworks */ = {isa = PBXBuildFile; productRef = E324810A2CF0654E00575547 /* NetworkManagerFramework */; };
 		E324810E2CF065C000575547 /* izziDateFormatter in Frameworks */ = {isa = PBXBuildFile; productRef = E324810D2CF065C000575547 /* izziDateFormatter */; };
+		E32481192CF0838C00575547 /* izziGradient in Frameworks */ = {isa = PBXBuildFile; productRef = E32481182CF0838C00575547 /* izziGradient */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 			files = (
 				E324810B2CF0654E00575547 /* NetworkManagerFramework in Frameworks */,
 				E324810E2CF065C000575547 /* izziDateFormatter in Frameworks */,
+				E32481192CF0838C00575547 /* izziGradient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +136,7 @@
 			packageProductDependencies = (
 				E324810A2CF0654E00575547 /* NetworkManagerFramework */,
 				E324810D2CF065C000575547 /* izziDateFormatter */,
+				E32481182CF0838C00575547 /* izziGradient */,
 			);
 			productName = "instagram-swift";
 			productReference = E32480BB2CF05B8E00575547 /* instagram-swift.app */;
@@ -220,6 +223,7 @@
 			packageReferences = (
 				E32481092CF0654E00575547 /* XCRemoteSwiftPackageReference "webService" */,
 				E324810C2CF065C000575547 /* XCRemoteSwiftPackageReference "izziDateFormatter" */,
+				E32481172CF0838C00575547 /* XCRemoteSwiftPackageReference "izziGradient" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E32480BC2CF05B8E00575547 /* Products */;
@@ -598,6 +602,14 @@
 				kind = branch;
 			};
 		};
+		E32481172CF0838C00575547 /* XCRemoteSwiftPackageReference "izziGradient" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Desp0o/izziGradient.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -610,6 +622,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E324810C2CF065C000575547 /* XCRemoteSwiftPackageReference "izziDateFormatter" */;
 			productName = izziDateFormatter;
+		};
+		E32481182CF0838C00575547 /* izziGradient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32481172CF0838C00575547 /* XCRemoteSwiftPackageReference "izziGradient" */;
+			productName = izziGradient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
