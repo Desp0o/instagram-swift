@@ -12,10 +12,9 @@ class KeyChainManager {
  
     static let shared = KeyChainManager()
     
-    func save(_ data: Data, service: String, account: String) {
+    func save(_ data: Data, account: String) {
         let query = [
             kSecClass: kSecClassGenericPassword,
-            kSecAttrService: service,
             kSecAttrAccount: account,
             kSecValueData: data
         ] as CFDictionary
@@ -24,10 +23,9 @@ class KeyChainManager {
         SecItemAdd(query, nil)
     }
     
-    func read(service: String, account: String) -> Data? {
+    func read(account: String) -> Data? {
         let query = [
             kSecClass: kSecClassGenericPassword,
-            kSecAttrService: service,
             kSecAttrAccount: account,
             kSecReturnData: true,
             kSecMatchLimit: kSecMatchLimitOne
@@ -37,5 +35,4 @@ class KeyChainManager {
         SecItemCopyMatching(query, &result)
         return result as? Data
     }
-
 }

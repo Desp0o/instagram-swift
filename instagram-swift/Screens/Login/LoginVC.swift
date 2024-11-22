@@ -13,7 +13,7 @@ class LoginVC: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.configureCustomText(text: "Instagram", color: .primaryBlack, isBold: false, size: 50)
-        label.font = UIFont(name: "SnellRoundhand", size: 50)
+        label.font = UIFont(name: "HoeflerText-Italic", size: 50)
         return label
     }()
     private lazy var usernameTextField: UITextField = {
@@ -105,6 +105,7 @@ class LoginVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        view.backgroundColor = .white
     }
     
     private func setupUI() {
@@ -167,12 +168,12 @@ class LoginVC: UIViewController {
             facebookLoginButton.topAnchor.constraint(equalTo: orLabel.bottomAnchor, constant: 60),
             facebookLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            divider.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
+            divider.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
             divider.leftAnchor.constraint(equalTo: view.leftAnchor),
             divider.rightAnchor.constraint(equalTo: view.rightAnchor),
             divider.heightAnchor.constraint(equalToConstant: 2),
             
-            signupLabel.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: 20),
+            signupLabel.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: 10),
             signupLabel.leftAnchor.constraint(equalTo: facebookLoginButton.leftAnchor),
             
             signupButton.centerYAnchor.constraint(equalTo: signupLabel.centerYAnchor),
