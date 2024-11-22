@@ -70,8 +70,17 @@ class LoginVC: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "OR"
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .systemGray4
+        label.textColor = .systemGray2
         return label
+    }()
+    private lazy var facebookLoginButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Log in with Facebook", for: .normal)
+        button.setImage(UIImage(systemName: "person.circle"), for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
+        button.setTitleColor(.customBlue, for: .normal)
+        return button
     }()
 
     override func viewDidLoad() {
@@ -92,6 +101,7 @@ class LoginVC: UIViewController {
         view.addSubview(leftThinLine)
         view.addSubview(righThinLine)
         view.addSubview(orLabel)
+        view.addSubview(facebookLoginButton)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -126,7 +136,10 @@ class LoginVC: UIViewController {
             righThinLine.centerYAnchor.constraint(equalTo: orLabel.centerYAnchor),
             righThinLine.rightAnchor.constraint(equalTo: usernameTextField.rightAnchor),
             righThinLine.leftAnchor.constraint(equalTo: orLabel.rightAnchor, constant: 20),
-            righThinLine.heightAnchor.constraint(equalTo: leftThinLine.heightAnchor)
+            righThinLine.heightAnchor.constraint(equalTo: leftThinLine.heightAnchor),
+            
+            facebookLoginButton.topAnchor.constraint(equalTo: orLabel.bottomAnchor, constant: 60),
+            facebookLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 }
