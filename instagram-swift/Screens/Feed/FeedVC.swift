@@ -8,8 +8,18 @@
 import UIKit
 
 class FeedVC: UIViewController {
+    let feedViewModel: FeedViewModel
     private let topBar = UIView()
     private let logo = UIImageView()
+    
+    init(feedViewModel: FeedViewModel = FeedViewModel()) {
+        self.feedViewModel = feedViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
