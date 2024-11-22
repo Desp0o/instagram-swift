@@ -53,6 +53,26 @@ class LoginVC: UIViewController {
         button.backgroundColor = .customBlue
         return button
     }()
+    private lazy var leftThinLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var righThinLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var orLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "OR"
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .systemGray4
+        return label
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +89,9 @@ class LoginVC: UIViewController {
         view.addSubview(passwordTextField)
         view.addSubview(forgottenPasswordbutton)
         view.addSubview(loginButton)
+        view.addSubview(leftThinLine)
+        view.addSubview(righThinLine)
+        view.addSubview(orLabel)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -90,7 +113,20 @@ class LoginVC: UIViewController {
             loginButton.leftAnchor.constraint(equalTo: usernameTextField.leftAnchor),
             loginButton.rightAnchor.constraint(equalTo: usernameTextField.rightAnchor),
             loginButton.topAnchor.constraint(equalTo: forgottenPasswordbutton.bottomAnchor, constant: 20),
-            loginButton.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor)
+            loginButton.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor),
+            
+            orLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            orLabel.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 20),
+            
+            leftThinLine.leftAnchor.constraint(equalTo: usernameTextField.leftAnchor),
+            leftThinLine.rightAnchor.constraint(equalTo: orLabel.leftAnchor, constant: -20),
+            leftThinLine.heightAnchor.constraint(equalToConstant: 2),
+            leftThinLine.centerYAnchor.constraint(equalTo: orLabel.centerYAnchor),
+            
+            righThinLine.centerYAnchor.constraint(equalTo: orLabel.centerYAnchor),
+            righThinLine.rightAnchor.constraint(equalTo: usernameTextField.rightAnchor),
+            righThinLine.leftAnchor.constraint(equalTo: orLabel.rightAnchor, constant: 20),
+            righThinLine.heightAnchor.constraint(equalTo: leftThinLine.heightAnchor)
         ])
     }
 }
