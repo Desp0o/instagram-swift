@@ -4,42 +4,55 @@
 //
 //  Created by Despo on 22.11.24.
 //
-
+import SwiftUI
 import UIKit
 
 class LoginVC: UIViewController {
     
-    let button = UIButton()
+    private lazy var instagramLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.configureCustomText(text: "Instagram", color: .primaryBlack, isBold: false, size: 50)
+        label.font = UIFont(name: "SnellRoundhand", size: 50)
+        return label
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
     }
     
     private func setupUI() {
-        view.backgroundColor = .taggedBlue
-        navigationController?.isNavigationBarHidden = true
-        
-        setupButton()
+        setupConstraints()
     }
     
-    private func setupButton() {
-        button.setTitle("go to feed", for: .normal)
-        button.addAction(UIAction(handler: { [weak self] _ in
-            self?.handleLogin()
-        }), for: .touchUpInside)
+    private func setupConstraints() {
+        view.addSubview(instagramLabel)
         
-        button.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(button)
         NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            instagramLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 20)
         ])
     }
+}
+
+
+struct viewControllerRepresentable: UIViewControllerRepresentable {
     
-    private func handleLogin() {
-        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-        sceneDelegate?.window?.rootViewController = TabBarController()
+    typealias UIViewControllerType = LoginVC
+    
+    
+    func makeUIViewController(context: Context) -> LoginVC {
+        LoginVC()
+    }
+    
+    func updateUIViewController(_ uiViewController: LoginVC, context: Context) {
+        
+    }
+}
+
+struct viewController_Previews: PreviewProvider {
+    static var previews: some View {
+        viewControllerRepresentable()
     }
 }
