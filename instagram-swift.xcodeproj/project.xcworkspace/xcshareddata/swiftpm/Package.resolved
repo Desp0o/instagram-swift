@@ -1,0 +1,24 @@
+{
+  "originHash" : "d8ae3894e4e7d2ca130ac447f3397c9194e168dbf49dbf36280c33d59e514dde",
+  "pins" : [
+    {
+      "identity" : "izzidateformatter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Desp0o/izziDateFormatter.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cf7f8ffffcec0ee80160b070ac1b077e15b7eaa2"
+      }
+    },
+    {
+      "identity" : "webservice",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Desp0o/webService.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "0396968e63f421d1a8539d7341a2badcea9fffa7"
+      }
+    }
+  ],
+  "version" : 3
+}
