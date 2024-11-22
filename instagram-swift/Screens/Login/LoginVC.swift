@@ -21,9 +21,21 @@ class LoginVC: UIViewController {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.backgroundColor = .customGray
-        textField.placeholder = "phone number, username or email address"
+        textField.placeholder = "Phone number, username or email address"
         textField.font = UIFont.systemFont(ofSize: 14)
         textField.textAlignment = .center
+        textField.layer.cornerRadius = 5
+        return textField
+    }()
+    
+    private lazy var passwordTextField: UITextField = {
+        let textField = UITextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.placeholder = "Password"
+        textField.textAlignment = .center
+        textField.backgroundColor = .customGray
+        textField.font = UIFont.systemFont(ofSize: 14)
+        textField.layer.cornerRadius = 5
         return textField
     }()
 
@@ -39,6 +51,7 @@ class LoginVC: UIViewController {
     private func setupConstraints() {
         view.addSubview(instagramLabel)
         view.addSubview(usernameTextField)
+        view.addSubview(passwordTextField)
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -47,8 +60,12 @@ class LoginVC: UIViewController {
             usernameTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
             usernameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
             usernameTextField.topAnchor.constraint(equalTo: instagramLabel.bottomAnchor, constant: 30),
-            usernameTextField.heightAnchor.constraint(equalToConstant: 50),
+            usernameTextField.heightAnchor.constraint(equalToConstant: 40),
             
+            passwordTextField.leftAnchor.constraint(equalTo: usernameTextField.leftAnchor),
+            passwordTextField.rightAnchor.constraint(equalTo: usernameTextField.rightAnchor),
+            passwordTextField.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 20),
+            passwordTextField.heightAnchor.constraint(equalTo: usernameTextField.heightAnchor)
             
         ])
         
