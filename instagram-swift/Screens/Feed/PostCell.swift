@@ -10,23 +10,16 @@ import UIKit
 class PostCell: UICollectionViewCell {
     let customView: CustomPostView
     
-    // Proper initialization with `frame` and default value for `customView`
     override init(frame: CGRect) {
-        self.customView = CustomPostView()  // Initialize customView here
-        super.init(frame: frame)  // Call the designated initializer of UICollectionViewCell
+        self.customView = CustomPostView(frame: .zero)
+        super.init(frame: frame)
         setupUI()
     }
     
-    
-    
-    // Required initializer for decoding (if you ever use storyboard or nib)
     required init?(coder: NSCoder) {
-        self.customView = CustomPostView()  // Initialize customView here as well
-        super.init(coder: coder)
-        setupUI()
+        fatalError("init(coder:) has not been implemented")
     }
     
-    // Configure cell with PostModel
     func configureCell(with post: PostModel) {
         customView.setupView(with: post)
     }

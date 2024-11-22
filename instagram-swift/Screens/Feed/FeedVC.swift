@@ -15,13 +15,13 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
     private let topBar = UIView()
     private let logo = UIImageView()
     
-
+    
     
     private lazy var collection: UICollectionView = {
         let collection: UICollectionView
         let collectionLayout = UICollectionViewFlowLayout()
         collectionLayout.scrollDirection = .vertical
-
+        
         collectionLayout.itemSize = CGSize(width: view.frame.width, height: 625)
         collectionLayout.minimumLineSpacing = 0
         collection = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
@@ -31,7 +31,7 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
         collection.delegate = self
         collection.dataSource = self
         collection.showsVerticalScrollIndicator = false
-
+        
         return collection
     }()
     
@@ -66,7 +66,7 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
             collection.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             collection.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 50),
-
+            
         ])
     }
     
@@ -123,14 +123,14 @@ extension FeedVC: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PostCell", for: indexPath) as? PostCell
+        
         if let currentPost = feedViewModel.singlePost(with: indexPath.row) {
-            print("single post is \(currentPost.user.username)")
-                cell?.configureCell(with: currentPost)
-            } else {
-                print("Post is nil")
-            }
-            
-            return cell ?? PostCell()
+            cell?.configureCell(with: currentPost)
+        } else {
+            print("Post is nil")
+        }
+        
+        return cell ?? PostCell()
     }
     
     
