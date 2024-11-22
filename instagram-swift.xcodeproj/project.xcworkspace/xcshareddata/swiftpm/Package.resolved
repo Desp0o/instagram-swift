@@ -1,5 +1,5 @@
 {
-  "originHash" : "d8ae3894e4e7d2ca130ac447f3397c9194e168dbf49dbf36280c33d59e514dde",
+  "originHash" : "c40d78798b3ce5e9e37bdb25ac1d5d425fdb6375155f408218df51efda2b4a57",
   "pins" : [
     {
       "identity" : "izzidateformatter",
@@ -8,6 +8,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "cf7f8ffffcec0ee80160b070ac1b077e15b7eaa2"
+      }
+    },
+    {
+      "identity" : "izzigradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Desp0o/izziGradient.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "831561caca4d86a331c8a37498471a53044c7864"
       }
     },
     {
