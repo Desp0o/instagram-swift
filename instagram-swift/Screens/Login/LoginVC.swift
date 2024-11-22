@@ -108,10 +108,11 @@ class LoginVC: UIViewController {
     }
     
     private func setupUI() {
+        addingViews()
         setupConstraints()
     }
     
-    private func setupConstraints() {
+    private func addingViews() {
         view.addSubview(instagramLabel)
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
@@ -124,6 +125,9 @@ class LoginVC: UIViewController {
         view.addSubview(divider)
         view.addSubview(signupLabel)
         view.addSubview(signupButton)
+    }
+    
+    private func setupConstraints() {
         
         NSLayoutConstraint.activate([
             instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
