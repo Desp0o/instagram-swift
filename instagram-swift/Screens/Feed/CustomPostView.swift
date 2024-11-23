@@ -353,9 +353,9 @@ class CustomPostView: UIView {
         if sender.tag == 0 {
             isLiked.toggle()
             print(isLiked)
+            
+            sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
         }
-        
-        sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
     }
     
     private func setupBulletStack() {
