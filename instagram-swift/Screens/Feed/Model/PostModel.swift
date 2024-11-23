@@ -38,5 +38,6 @@ struct Comment: Codable {
     let username: String
     let comment:  String
     var timestamp: String
+    let profilePicture: String
 }
 
