@@ -72,7 +72,7 @@ class CustomPostView: UIView {
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = .white
         image.image = UIImage(named: "Rectangle")
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .scaleToFill
         
         return image
     }()
@@ -318,8 +318,8 @@ class CustomPostView: UIView {
             likesCountStack.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: 0),
             likesCountStack.bottomAnchor.constraint(equalTo: postView.bottomAnchor),
             
-            lastLikedAvatar.heightAnchor.constraint(equalToConstant: 18),
-            lastLikedAvatar.widthAnchor.constraint(equalToConstant: 18),
+            lastLikedAvatar.heightAnchor.constraint(equalToConstant: 24),
+            lastLikedAvatar.widthAnchor.constraint(equalToConstant: 24),
             
             commentStack.topAnchor.constraint(equalTo: likesCountStack.bottomAnchor, constant: 10),
             commentStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
@@ -397,7 +397,7 @@ class CustomPostView: UIView {
               bulletsStack.arrangedSubviews.count == imageCount else { return }
         
         for (index, view) in bulletsStack.arrangedSubviews.enumerated() {
-            view.backgroundColor = index == currentPage ? .systemBlue : .systemGray4
+            view.backgroundColor = index == currentPage ? .customBlue : .secondaryGray
         }
     }
     
@@ -426,7 +426,9 @@ class CustomPostView: UIView {
     
     private func resetCollectionView() {
         currentPage = 0
-        collection.contentOffset = .zero
+        collection.scrollToItem(at: IndexPath(item: 0, section: 0),
+                                at: .top,
+                                animated: false)
     }
     
     private func setupCommentStack() {
@@ -456,6 +458,11 @@ class CustomPostView: UIView {
         lastComment.configureCustomText(text: model.comments.first?.comment ?? "", color: .primaryBlack, isBold: true, size: 13)
         commentAuthor.text = model.comments.first?.username ?? ""
         postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
+        
+        if let avatarUrl = URL(string: model.comments[0].profilePicture) {
+            lastLikedAvatar.imageFrom(url: avatarUrl)
+            lastLikedAvatar.layer.cornerRadius = 12
+        }
         
         if let url = URL(string: model.user.profilePicture) {
             userAvatar.imageFrom(url: url)
