@@ -10,7 +10,7 @@ import Foundation
 
 class FeedVC: UIViewController, FeedViewModelDelegate {
     
-    let feedViewModel: FeedViewModel
+    let postViewModel: PostViewModel
     
     private lazy var topBar: UIView = {
         let bar = UIView()
@@ -54,8 +54,8 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
         return collection
     }()
     
-    init(feedViewModel: FeedViewModel = FeedViewModel()) {
-        self.feedViewModel = feedViewModel
+    init(postViewModel: PostViewModel = PostViewModel()) {
+        self.postViewModel = postViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,7 +65,7 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        feedViewModel.delegate = self
+        postViewModel.delegate = self
         setupUI()
     }
     
@@ -110,13 +110,13 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
 
 extension FeedVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        feedViewModel.count
+        postViewModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PostCell", for: indexPath) as? PostCell
         
-        if let currentPost = feedViewModel.singlePost(with: indexPath.row) {
+        if let currentPost = postViewModel.singlePost(with: indexPath.row) {
             cell?.configureCell(with: currentPost)
         } else {
             print("Post is nil")

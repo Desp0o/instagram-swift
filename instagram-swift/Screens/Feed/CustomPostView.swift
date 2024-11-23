@@ -12,7 +12,7 @@ class CustomPostView: UIView {
     var model: PostModel?
     private var isLiked: Bool = false
     
-    private let feedViewModel: FeedViewModel
+    private let postViewModel: PostViewModel
     
     private let emptyView: UIView = {
         let view = UIView()
@@ -226,8 +226,8 @@ class CustomPostView: UIView {
         }
     }
     
-    init(frame: CGRect, feedViewModel: FeedViewModel = FeedViewModel()) {
-        self.feedViewModel = feedViewModel
+    init(frame: CGRect, postViewModel: PostViewModel = PostViewModel()) {
+        self.postViewModel = postViewModel
         super.init(frame: frame)
         
         setupUI()
@@ -451,7 +451,7 @@ class CustomPostView: UIView {
         userAvatar.layer.cornerRadius = 16
         
         imageCounterView.isHidden = (model.images.count <= 1)
-        updateImageCounter(page: 0)
+        updateImageCounter(page: 2)
         
         setupBulletStack()
         collection.reloadData()

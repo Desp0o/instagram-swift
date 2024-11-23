@@ -13,19 +13,13 @@ protocol FeedViewModelDelegate: AnyObject {
     func didFinishFetchingData()
 }
 
-protocol CustomiewModelDelegate: AnyObject {
-    func didFinishFetchingData()
-}
-
-final class FeedViewModel {
+final class PostViewModel {
     private let networkService: NetworkServiceProtocol
     private let dateFormatter: IzziDateFormatterProtocol
     var allPostsData: [PostModel] = []
     var singlePost: PostModel?
     
     weak var delegate: FeedViewModelDelegate?
-    weak var customDelegate: CustomiewModelDelegate?
-
     
     init(networkService: NetworkServiceProtocol = NetworkService(), dateFormatter: IzziDateFormatterProtocol = IzziDateFormatter()) {
         self.networkService = networkService
@@ -57,7 +51,6 @@ final class FeedViewModel {
                 allPostsData = formatedData
                 DispatchQueue.main.async {[weak self] in
                     self?.delegate?.didFinishFetchingData()
-                    self?.customDelegate?.didFinishFetchingData()
                 }
                 
             } catch NetworkError.httpResponseError {
