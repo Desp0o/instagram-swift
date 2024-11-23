@@ -9,6 +9,8 @@ import UIKit
 
 class ProfileSettingsVC: UIViewController {
     
+    private var viewModel = ProfileSettingsViewModel()
+    
     var headerlabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -81,7 +83,6 @@ class ProfileSettingsVC: UIViewController {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
-        textField.text = "Jacob West"
 
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.textColor = .black
@@ -204,7 +205,7 @@ class ProfileSettingsVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        saveData()
         setupUI()
     }
     
@@ -319,6 +320,20 @@ class ProfileSettingsVC: UIViewController {
             linkTaxtField.topAnchor.constraint(equalTo: linkView.topAnchor),
             linkTaxtField.bottomAnchor.constraint(equalTo: linkView.bottomAnchor)
         ])
+    }
+    
+    private func saveData() {
+        nameTaxtField.text = viewModel.name
+        userNameTaxtField.text = viewModel.username
+        bioTaxtField.text = viewModel.bio
+        linkTaxtField.text = viewModel.link
+        
+        doneButton.addAction(UIAction(handler: { [weak self] _ in
+            self?.viewModel.saveProfileInfo(name: self?.nameTaxtField.text ?? "",
+                                            username: self?.userNameTaxtField.text ?? "",
+                                            bio: self?.bioTaxtField.text ?? "",
+                                            link: self?.linkTaxtField.text ?? "")
+        }), for: .touchUpInside)
     }
 }
 
