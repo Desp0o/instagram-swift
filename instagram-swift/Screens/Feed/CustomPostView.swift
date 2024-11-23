@@ -70,9 +70,9 @@ class CustomPostView: UIView {
     private lazy var postImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.backgroundColor = .clear
+        image.backgroundColor = .white
         image.image = UIImage(named: "Rectangle")
-        image.contentMode = .scaleToFill
+        image.contentMode = .scaleAspectFill
         
         return image
     }()
@@ -353,8 +353,14 @@ class CustomPostView: UIView {
         if sender.tag == 0 {
             isLiked.toggle()
             print(isLiked)
-            
             sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
+            
+            guard let viewController = findViewController(), let model = model  else {
+                print("No view controller found")
+                return
+            }
+            
+            viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
         }
     }
     
@@ -366,7 +372,7 @@ class CustomPostView: UIView {
         for i in 0..<imageCount {
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
-            view.backgroundColor = i == currentPage ? .systemBlue : .systemGray4
+            view.backgroundColor = i == currentPage ? .systemBlue : .secondaryGray
             
             NSLayoutConstraint.activate([
                 view.widthAnchor.constraint(equalToConstant: 8),
@@ -377,6 +383,12 @@ class CustomPostView: UIView {
             view.clipsToBounds = true
             bulletsStack.addArrangedSubview(view)
         }
+    }
+    
+    static func configureView(with model: PostModel) -> CustomPostView {
+        let viewController = CustomPostView(frame: .zero)
+        viewController.model = model
+        return viewController
     }
     
     private func updateBullets() {
@@ -483,5 +495,19 @@ extension CustomPostView: UICollectionViewDelegate, UICollectionViewDataSource, 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let page = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
         updateImageCounter(page: page)
+    }
+}
+
+
+extension UIView {
+    func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let currentResponder = responder {
+            if let viewController = currentResponder as? UIViewController {
+                return viewController
+            }
+            responder = currentResponder.next
+        }
+        return nil
     }
 }
