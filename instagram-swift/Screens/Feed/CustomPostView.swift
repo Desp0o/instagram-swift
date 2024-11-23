@@ -101,7 +101,7 @@ class CustomPostView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .red
         view.layer.cornerRadius = 12
-//        view.isHidden = true
+        //        view.isHidden = true
         return view
     }()
     
@@ -185,6 +185,33 @@ class CustomPostView: UIView {
         return label
     }()
     
+    private lazy var commentStack: UIView = {
+        let stack = UIView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    private lazy var commentAuthor: UILabel = {
+        let label = UILabel()
+        label.configureCustomText(text: "", color: .primaryBlack, isBold: true, size: 13)
+        
+        return label
+    }()
+    
+    private lazy var lastComment: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    private lazy var postDate: UILabel = {
+        let label = UILabel()
+        
+        return label
+    }()
+    
     private var currentPage: Int = 0 {
         didSet {
             updateBullets()
@@ -222,6 +249,8 @@ class CustomPostView: UIView {
         userInfoStack.addArrangedSubview(location)
         
         postView.addArrangedSubview(collection)
+        collection.addSubview(imageCounterView)
+        imageCounterView.addSubview(imageCounterLabel)
         
         postView.addArrangedSubview(paginationStack)
         paginationStack.addArrangedSubview(iconStack)
@@ -232,14 +261,17 @@ class CustomPostView: UIView {
         likesCountStack.addArrangedSubview(lastLikedAvatar)
         likesCountStack.addArrangedSubview(lastPersonLieked)
         
-        collection.addSubview(imageCounterView)
-        imageCounterView.addSubview(imageCounterLabel)
-        collection.bringSubviewToFront(imageCounterView)
+        postView.addSubview(commentStack)
+        postView.addSubview(postDate)
         
         setupTabUserAvatar()
         setupConstraints()
         setupIconStack()
         setupLastLikedStack()
+        
+        DispatchQueue.main.async {
+            self.setupCommentStack()
+        }
     }
     
     private func setupConstraints() {
@@ -288,6 +320,12 @@ class CustomPostView: UIView {
             
             lastLikedAvatar.heightAnchor.constraint(equalToConstant: 18),
             lastLikedAvatar.widthAnchor.constraint(equalToConstant: 18),
+            
+            commentStack.topAnchor.constraint(equalTo: likesCountStack.bottomAnchor, constant: 10),
+            commentStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            
+            postDate.topAnchor.constraint(equalTo: commentStack.bottomAnchor, constant: 30),
+            postDate.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
         ])
     }
     
@@ -369,6 +407,33 @@ class CustomPostView: UIView {
         lastPersonLieked.addArrangedSubview(view)
     }
     
+    private func updateImageCounter(page: Int) {
+        guard let totalImages = model?.images.count else { return }
+        imageCounterLabel.text = "\(page + 1)/\(totalImages)"
+    }
+    
+    private func resetCollectionView() {
+        currentPage = 0
+        collection.contentOffset = .zero
+    }
+    
+    private func setupCommentStack() {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.createAttributedText(
+            text: "\(commentAuthor.text ?? "") \(lastComment.text ?? "")",
+            firstWordColor: .primaryBlack,
+            restColor: .primaryBlack,
+            firstWordFont: .boldSystemFont(ofSize: 13),
+            restFont: .systemFont(ofSize: 13)
+        )
+        
+        commentStack.addSubview(label)
+    }
+    
     func setupView(with model: PostModel) {
         self.model = model
         userName.text = model.user.username
@@ -376,6 +441,9 @@ class CustomPostView: UIView {
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
+        lastComment.configureCustomText(text: model.comments.first?.comment ?? "", color: .primaryBlack, isBold: true, size: 13)
+        commentAuthor.text = model.comments.first?.username ?? ""
+        postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
         
         if let url = URL(string: model.user.profilePicture) {
             userAvatar.imageFrom(url: url)
@@ -388,16 +456,6 @@ class CustomPostView: UIView {
         setupBulletStack()
         collection.reloadData()
         resetCollectionView()
-    }
-    
-    private func updateImageCounter(page: Int) {
-        guard let totalImages = model?.images.count else { return }
-        imageCounterLabel.text = "\(page + 1)/\(totalImages)"
-    }
-    
-    private func resetCollectionView() {
-        currentPage = 0
-        collection.contentOffset = .zero
     }
 }
 
