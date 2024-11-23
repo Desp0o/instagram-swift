@@ -215,6 +215,11 @@ class ProfileVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        editProfileButton.addAction(UIAction(handler: { [weak self] _ in
+            let vc = ProfileSettingsVC()
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }), for: .touchUpInside)
 
         setupUI()
     }
