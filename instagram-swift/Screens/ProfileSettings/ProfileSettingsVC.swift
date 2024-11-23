@@ -57,7 +57,7 @@ class ProfileSettingsVC: UIViewController {
         var stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fillEqually
         stackView.spacing = 20
         stackView.alignment = .center
         
@@ -83,6 +83,10 @@ class ProfileSettingsVC: UIViewController {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
+        textField.isEnabled = true
+        textField.returnKeyType = .next
+        textField.isUserInteractionEnabled = true
+        textField.text = "Jacob West"
 
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.textColor = .black
@@ -114,6 +118,7 @@ class ProfileSettingsVC: UIViewController {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
+        textField.returnKeyType = .next
         textField.text = "Jacob_w"
 
         textField.font = UIFont.systemFont(ofSize: 16)
@@ -146,6 +151,7 @@ class ProfileSettingsVC: UIViewController {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
+        textField.returnKeyType = .next
         textField.text = "Everything is designed"
 
         textField.font = UIFont.systemFont(ofSize: 16)
@@ -178,6 +184,7 @@ class ProfileSettingsVC: UIViewController {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
+        textField.returnKeyType = .next
         textField.text = "Digital goodies designer @pixsellz"
 
         textField.font = UIFont.systemFont(ofSize: 16)
@@ -205,6 +212,7 @@ class ProfileSettingsVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.hidesBackButton = true
         saveData()
         setupUI()
     }
@@ -274,7 +282,14 @@ class ProfileSettingsVC: UIViewController {
         
         NSLayoutConstraint.activate([
             userInfoStackView.topAnchor.constraint(equalTo: lineViewAfterPic.bottomAnchor, constant: 30),
-            userInfoStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10)
+            userInfoStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            userInfoStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20)
+        ])
+        
+        NSLayoutConstraint.activate([
+            nameView.heightAnchor.constraint(equalToConstant: 40),
+            nameView.leadingAnchor.constraint(equalTo: userInfoStackView.leadingAnchor),
+            nameView.trailingAnchor.constraint(equalTo: userInfoStackView.trailingAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -283,9 +298,16 @@ class ProfileSettingsVC: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            nameTaxtField.leftAnchor.constraint(equalTo: nameView.rightAnchor, constant: 100),
-            nameTaxtField.topAnchor.constraint(equalTo: nameView.topAnchor),
-            nameTaxtField.bottomAnchor.constraint(equalTo: nameView.bottomAnchor)
+            nameTaxtField.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 20),
+              nameTaxtField.trailingAnchor.constraint(equalTo: nameView.trailingAnchor),
+              nameTaxtField.centerYAnchor.constraint(equalTo: nameView.centerYAnchor),
+              nameTaxtField.widthAnchor.constraint(equalToConstant: 250)
+        ])
+        
+        NSLayoutConstraint.activate([
+            userNameView.heightAnchor.constraint(equalToConstant: 40),
+            userNameView.leadingAnchor.constraint(equalTo: userInfoStackView.leadingAnchor),
+            userNameView.trailingAnchor.constraint(equalTo: userInfoStackView.trailingAnchor),
         ])
         
         NSLayoutConstraint.activate([
@@ -294,9 +316,16 @@ class ProfileSettingsVC: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            userNameTaxtField.leftAnchor.constraint(equalTo: nameView.rightAnchor, constant: 100),
-            userNameTaxtField.topAnchor.constraint(equalTo: userNameView.topAnchor),
-            userNameTaxtField.bottomAnchor.constraint(equalTo: userNameView.bottomAnchor)
+            userNameTaxtField.leadingAnchor.constraint(equalTo: userNameLabel.trailingAnchor, constant: 20),
+            userNameTaxtField.trailingAnchor.constraint(equalTo: userNameView.trailingAnchor),
+            userNameTaxtField.centerYAnchor.constraint(equalTo: userNameView.centerYAnchor),
+            userNameTaxtField.widthAnchor.constraint(equalToConstant: 250),
+        ])
+        
+        NSLayoutConstraint.activate([
+            bioView.heightAnchor.constraint(equalToConstant: 40),
+            bioView.leadingAnchor.constraint(equalTo: userInfoStackView.leadingAnchor),
+            bioView.trailingAnchor.constraint(equalTo: userInfoStackView.trailingAnchor)
         ])
         
         NSLayoutConstraint.activate([
@@ -305,9 +334,16 @@ class ProfileSettingsVC: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            bioTaxtField.leftAnchor.constraint(equalTo: bioView.rightAnchor, constant: 100),
-            bioTaxtField.topAnchor.constraint(equalTo: bioView.topAnchor),
-            bioTaxtField.bottomAnchor.constraint(equalTo: bioView.bottomAnchor)
+            bioTaxtField.leadingAnchor.constraint(equalTo: bioLabel.trailingAnchor, constant: 20),
+            bioTaxtField.trailingAnchor.constraint(equalTo: bioView.trailingAnchor),
+            bioTaxtField.centerYAnchor.constraint(equalTo: bioView.centerYAnchor),
+            bioTaxtField.widthAnchor.constraint(equalToConstant: 250)
+        ])
+        
+        NSLayoutConstraint.activate([
+            linkView.heightAnchor.constraint(equalToConstant: 40),
+            linkView.leadingAnchor.constraint(equalTo: userInfoStackView.leadingAnchor),
+            linkView.trailingAnchor.constraint(equalTo: userInfoStackView.trailingAnchor)
         ])
         
         NSLayoutConstraint.activate([
@@ -316,9 +352,10 @@ class ProfileSettingsVC: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            linkTaxtField.leftAnchor.constraint(equalTo: linkView.rightAnchor, constant: 100),
-            linkTaxtField.topAnchor.constraint(equalTo: linkView.topAnchor),
-            linkTaxtField.bottomAnchor.constraint(equalTo: linkView.bottomAnchor)
+            linkTaxtField.leadingAnchor.constraint(equalTo: linkLabel.trailingAnchor, constant: 20),
+            linkTaxtField.trailingAnchor.constraint(equalTo: linkView.trailingAnchor),
+            linkTaxtField.centerYAnchor.constraint(equalTo: linkView.centerYAnchor),
+            linkTaxtField.widthAnchor.constraint(equalToConstant: 250)
         ])
     }
     
@@ -333,6 +370,7 @@ class ProfileSettingsVC: UIViewController {
                                             username: self?.userNameTaxtField.text ?? "",
                                             bio: self?.bioTaxtField.text ?? "",
                                             link: self?.linkTaxtField.text ?? "")
+            self?.navigationController?.popViewController(animated: true)
         }), for: .touchUpInside)
     }
 }
