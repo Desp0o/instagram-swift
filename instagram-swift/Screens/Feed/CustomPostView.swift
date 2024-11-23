@@ -8,11 +8,11 @@
 import UIKit
 import Foundation
 
-class CustomPostView: UIView, CustomiewModelDelegate {
+class CustomPostView: UIView {
     var model: PostModel?
     private var isLiked: Bool = false
     
-    private let feedViewModel: FeedViewModel
+    private let postViewModel: PostViewModel
     
     private let emptyView: UIView = {
         let view = UIView()
@@ -96,6 +96,23 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         return collection
     }()
     
+    private lazy var imageCounterView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .red
+        view.layer.cornerRadius = 12
+        //        view.isHidden = true
+        return view
+    }()
+    
+    private lazy var imageCounterLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        return label
+    }()
+    
     private lazy var paginationStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -168,6 +185,39 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         return label
     }()
     
+    private lazy var commentStack: UIView = {
+        let stack = UIView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    private lazy var commentAuthor: UILabel = {
+        let label = UILabel()
+        label.configureCustomText(text: "", color: .primaryBlack, isBold: true, size: 13)
+        
+        return label
+    }()
+    
+    private lazy var lastComment: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    private lazy var postDate: UILabel = {
+        let label = UILabel()
+        
+        return label
+    }()
+    
+    private var currentPage: Int = 0 {
+        didSet {
+            updateBullets()
+        }
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -176,10 +226,9 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         }
     }
     
-    init(frame: CGRect, feedViewModel: FeedViewModel = FeedViewModel()) {
-        self.feedViewModel = feedViewModel
+    init(frame: CGRect, postViewModel: PostViewModel = PostViewModel()) {
+        self.postViewModel = postViewModel
         super.init(frame: frame)
-        self.feedViewModel.customDelegate = self
         
         setupUI()
     }
@@ -200,6 +249,8 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         userInfoStack.addArrangedSubview(location)
         
         postView.addArrangedSubview(collection)
+        collection.addSubview(imageCounterView)
+        imageCounterView.addSubview(imageCounterLabel)
         
         postView.addArrangedSubview(paginationStack)
         paginationStack.addArrangedSubview(iconStack)
@@ -210,10 +261,17 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         likesCountStack.addArrangedSubview(lastLikedAvatar)
         likesCountStack.addArrangedSubview(lastPersonLieked)
         
+        postView.addSubview(commentStack)
+        postView.addSubview(postDate)
+        
         setupTabUserAvatar()
         setupConstraints()
         setupIconStack()
         setupLastLikedStack()
+        
+        DispatchQueue.main.async {
+            self.setupCommentStack()
+        }
     }
     
     private func setupConstraints() {
@@ -242,6 +300,15 @@ class CustomPostView: UIView, CustomiewModelDelegate {
             collection.heightAnchor.constraint(equalToConstant: 406),
             collection.widthAnchor.constraint(equalTo: postView.widthAnchor),
             
+            imageCounterView.topAnchor.constraint(equalTo: collection.topAnchor, constant: 12),
+            imageCounterView.trailingAnchor.constraint(equalTo: collection.trailingAnchor, constant: -12),
+            imageCounterView.heightAnchor.constraint(equalToConstant: 24),
+            imageCounterView.widthAnchor.constraint(greaterThanOrEqualToConstant: 45),
+            
+            imageCounterLabel.leadingAnchor.constraint(equalTo: imageCounterView.leadingAnchor, constant: 8),
+            imageCounterLabel.trailingAnchor.constraint(equalTo: imageCounterView.trailingAnchor, constant: -8),
+            imageCounterLabel.centerYAnchor.constraint(equalTo: imageCounterView.centerYAnchor),
+            
             paginationStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 0),
             paginationStack.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: 0),
             
@@ -253,6 +320,12 @@ class CustomPostView: UIView, CustomiewModelDelegate {
             
             lastLikedAvatar.heightAnchor.constraint(equalToConstant: 18),
             lastLikedAvatar.widthAnchor.constraint(equalToConstant: 18),
+            
+            commentStack.topAnchor.constraint(equalTo: likesCountStack.bottomAnchor, constant: 10),
+            commentStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            
+            postDate.topAnchor.constraint(equalTo: commentStack.bottomAnchor, constant: 30),
+            postDate.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
         ])
     }
     
@@ -280,25 +353,39 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         if sender.tag == 0 {
             isLiked.toggle()
             print(isLiked)
+            
+            sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
         }
-        
-        sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
     }
     
     private func setupBulletStack() {
-        if model?.images.count ?? 0 > 1 {
-            for _ in 0..<(model?.images.count ?? 0) {
-                let view = UIView()
-                view.translatesAutoresizingMaskIntoConstraints = false
-                view.backgroundColor = .systemBlue
-                
-                view.widthAnchor.constraint(equalToConstant: 10).isActive = true
-                view.heightAnchor.constraint(equalToConstant: 10).isActive = true
-                
-                view.clipsToBounds = true
-                view.layer.cornerRadius = 5
-                bulletsStack.addArrangedSubview(view)
-            }
+        bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        guard let imageCount = model?.images.count, imageCount > 1 else { return }
+        
+        for i in 0..<imageCount {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = i == currentPage ? .systemBlue : .systemGray4
+            
+            NSLayoutConstraint.activate([
+                view.widthAnchor.constraint(equalToConstant: 8),
+                view.heightAnchor.constraint(equalToConstant: 8)
+            ])
+            
+            view.layer.cornerRadius = 4
+            view.clipsToBounds = true
+            bulletsStack.addArrangedSubview(view)
+        }
+    }
+    
+    private func updateBullets() {
+        guard let imageCount = model?.images.count,
+              imageCount > 1,
+              bulletsStack.arrangedSubviews.count == imageCount else { return }
+        
+        for (index, view) in bulletsStack.arrangedSubviews.enumerated() {
+            view.backgroundColor = index == currentPage ? .systemBlue : .systemGray4
         }
     }
     
@@ -320,34 +407,81 @@ class CustomPostView: UIView, CustomiewModelDelegate {
         lastPersonLieked.addArrangedSubview(view)
     }
     
+    private func updateImageCounter(page: Int) {
+        guard let totalImages = model?.images.count else { return }
+        imageCounterLabel.text = "\(page + 1)/\(totalImages)"
+    }
+    
+    private func resetCollectionView() {
+        currentPage = 0
+        collection.contentOffset = .zero
+    }
+    
+    private func setupCommentStack() {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.createAttributedText(
+            text: "\(commentAuthor.text ?? "") \(lastComment.text ?? "")",
+            firstWordColor: .primaryBlack,
+            restColor: .primaryBlack,
+            firstWordFont: .boldSystemFont(ofSize: 13),
+            restFont: .systemFont(ofSize: 13)
+        )
+        
+        commentStack.addSubview(label)
+    }
+    
     func setupView(with model: PostModel) {
         self.model = model
-        userName.text = "\(model.user.username)"
+        userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
-        guard let url = URL(string: model.user.profilePicture) else { return }
-        userAvatar.imageFrom(url: url)
+        lastComment.configureCustomText(text: model.comments.first?.comment ?? "", color: .primaryBlack, isBold: true, size: 13)
+        commentAuthor.text = model.comments.first?.username ?? ""
+        postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
+        
+        if let url = URL(string: model.user.profilePicture) {
+            userAvatar.imageFrom(url: url)
+        }
         userAvatar.layer.cornerRadius = 16
-    }
-    
-    func didFinishFetchingData() {
-        collection.reloadData()
+        
+        imageCounterView.isHidden = (model.images.count <= 1)
+        updateImageCounter(page: 2)
+        
         setupBulletStack()
+        collection.reloadData()
+        resetCollectionView()
     }
 }
 
-
-extension CustomPostView: UICollectionViewDelegate, UICollectionViewDataSource {
+extension CustomPostView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return model?.images.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CarouselCell", for: indexPath) as? CarouselCell
-        let currentImage = model?.images[indexPath.row]
-        cell?.configure(with: currentImage ?? "")
-        return cell ?? CarouselCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CarouselCell", for: indexPath) as? CarouselCell,
+              let currentImage = model?.images[indexPath.row] else {
+            return UICollectionViewCell()
+        }
+        
+        cell.configure(with: currentImage)
+        return cell
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let page = Int(scrollView.contentOffset.x / scrollView.bounds.width)
+        currentPage = page
+        updateImageCounter(page: page)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let page = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
+        updateImageCounter(page: page)
     }
 }

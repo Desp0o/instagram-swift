@@ -12,7 +12,7 @@ struct PostResponse: Codable {
 struct PostModel: Codable {
     let postId: Int
     let location: String
-    let images: [String]
+    var images: [String]
     var user: User
     var likes: Likes
     let description: String

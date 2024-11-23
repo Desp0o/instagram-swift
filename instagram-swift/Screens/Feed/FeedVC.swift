@@ -10,12 +10,31 @@ import Foundation
 
 class FeedVC: UIViewController, FeedViewModelDelegate {
     
+    let postViewModel: PostViewModel
     
-    let feedViewModel: FeedViewModel
-    private let topBar = UIView()
-    private let logo = UIImageView()
+    private lazy var topBar: UIView = {
+        let bar = UIView()
+        bar.translatesAutoresizingMaskIntoConstraints = false
+        bar.backgroundColor = .tabBarCol
+        
+        return bar
+    }()
     
+    private lazy var bottomLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.secondaryGray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
     
+    private lazy var logo: UIImageView = {
+        let logo = UIImageView()
+        logo.image = UIImage(named: "logo")
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        
+        return logo
+    }()
     
     private lazy var collection: UICollectionView = {
         let collection: UICollectionView
@@ -35,8 +54,8 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
         return collection
     }()
     
-    init(feedViewModel: FeedViewModel = FeedViewModel()) {
-        self.feedViewModel = feedViewModel
+    init(postViewModel: PostViewModel = PostViewModel()) {
+        self.postViewModel = postViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -46,7 +65,7 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        feedViewModel.delegate = self
+        postViewModel.delegate = self
         setupUI()
     }
     
@@ -55,57 +74,30 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
         navigationController?.isNavigationBarHidden = true
         
         view.addSubview(collection)
+        view.addSubview(topBar)
+        topBar.addSubview(bottomLine)
+        topBar.addSubview(logo)
         
-        setupTopBar()
         setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            topBar.heightAnchor.constraint(equalToConstant: 112),
+            
             collection.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 0),
             collection.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             collection.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 50),
             
-        ])
-    }
-    
-    private func setupTopBar() {
-        view.addSubview(topBar)
-        topBar.translatesAutoresizingMaskIntoConstraints = false
-        
-        topBar.backgroundColor = .tabBarCol
-        
-        NSLayoutConstraint.activate([
-            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            topBar.heightAnchor.constraint(equalToConstant: 112)
-        ])
-        
-        let bottomLine = UIView()
-        bottomLine.backgroundColor = UIColor.secondaryGray
-        bottomLine.translatesAutoresizingMaskIntoConstraints = false
-        
-        topBar.addSubview(bottomLine)
-        
-        NSLayoutConstraint.activate([
             bottomLine.leadingAnchor.constraint(equalTo: topBar.leadingAnchor),
             bottomLine.trailingAnchor.constraint(equalTo: topBar.trailingAnchor),
             bottomLine.bottomAnchor.constraint(equalTo: topBar.bottomAnchor),
-            bottomLine.heightAnchor.constraint(equalToConstant: 1)
-        ])
-        
-        setupBarLogo()
-    }
-    
-    private func setupBarLogo() {
-        topBar.addSubview(logo)
-        
-        logo.image = UIImage(named: "logo")
-        logo.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
+            bottomLine.heightAnchor.constraint(equalToConstant: 1),
+            
             logo.centerXAnchor.constraint(equalTo: topBar.centerXAnchor),
             logo.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -6)
         ])
@@ -118,13 +110,13 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
 
 extension FeedVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        feedViewModel.count
+        postViewModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PostCell", for: indexPath) as? PostCell
         
-        if let currentPost = feedViewModel.singlePost(with: indexPath.row) {
+        if let currentPost = postViewModel.singlePost(with: indexPath.row) {
             cell?.configureCell(with: currentPost)
         } else {
             print("Post is nil")
@@ -132,6 +124,4 @@ extension FeedVC: UICollectionViewDelegate, UICollectionViewDataSource {
         
         return cell ?? PostCell()
     }
-    
-    
 }
