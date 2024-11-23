@@ -191,8 +191,8 @@ class LoginVC: UIViewController {
         guard let password = passwordTextField.text else { return }
         
         if viewModel.handleLogin(username: username, password: password) {
-            let feedVC = FeedVC()
-            navigationController?.pushViewController(feedVC, animated: true)
+            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+            sceneDelegate?.window?.rootViewController = TabBarController()
         } else {
             showAlert()
         }
