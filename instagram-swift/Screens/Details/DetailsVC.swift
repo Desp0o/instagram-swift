@@ -70,14 +70,13 @@ class DetailsVC: UIViewController {
         let collection: UICollectionView
         let collectionLayout = UICollectionViewFlowLayout()
         collectionLayout.scrollDirection = .horizontal
-        collectionLayout.itemSize = CGSize(width: 100, height: 50)
+        collectionLayout.itemSize = CGSize(width: 100, height: 20)
         collectionLayout.minimumLineSpacing = 0
         collectionLayout.collectionView?.bounces = false
         collection = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
         collection.bounces = false
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(CommentCell.self, forCellWithReuseIdentifier: "CommentCell")
-        collection.isPagingEnabled = true
         collection.delegate = self
         collection.dataSource = self
         collection.showsHorizontalScrollIndicator = false
@@ -119,9 +118,8 @@ class DetailsVC: UIViewController {
         postView.translatesAutoresizingMaskIntoConstraints = false
         
         scrollView.addSubview(containerView)
-        containerView.addSubview(postView)
         containerView.addSubview(customView)
-        containerView.addSubview(collection)
+//        containerView.addSubview(collection)
         
         setupConstraints()
         setupButtonAction()
@@ -161,15 +159,17 @@ class DetailsVC: UIViewController {
             postView.topAnchor.constraint(equalTo: containerView.topAnchor),
             postView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             postView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            postView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+
             postView.heightAnchor.constraint(equalToConstant: 610),
 
-            collection.topAnchor.constraint(equalTo: postView.bottomAnchor, constant: 0),
-            collection.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            collection.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            collection.heightAnchor.constraint(equalToConstant: 700),
-
-            collection.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16)
+//            collection.topAnchor.constraint(equalTo: postView.bottomAnchor),
+//            collection.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+//            collection.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+//            collection.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+//            collection.heightAnchor.constraint(equalToConstant: 150)
         ])
+
     }
 
     private func setupButtonAction() {
