@@ -8,10 +8,12 @@
 import UIKit
 
 final class SearchVC: UIViewController {
+    
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.placeholder = "Search"
+        
         return searchBar
     }()
     
@@ -22,20 +24,27 @@ final class SearchVC: UIViewController {
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
+        
         return collectionView
     }()
     
-    private let viewModel = FeedViewModel()
+    private let viewModel = PostViewModel()
+    private var filteredPostsData: [PostModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         setupViewModel()
+        searchBar.delegate = self
     }
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        
+        view.addGestureRecognizer(tapGesture)
         
         view.addSubview(searchBar)
         view.addSubview(searchCollectionView)
@@ -59,6 +68,7 @@ final class SearchVC: UIViewController {
     
     private func setupViewModel() {
         viewModel.delegate = self
+        filteredPostsData = viewModel.allPostsData
     }
     
     private func createLayout() -> UICollectionViewLayout {
@@ -92,28 +102,68 @@ final class SearchVC: UIViewController {
             return section
         }
     }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }
 
 extension SearchVC: FeedViewModelDelegate {
     func didFinishFetchingData() {
         DispatchQueue.main.async { [weak self] in
+            self?.filteredPostsData = self?.viewModel.allPostsData ?? []
             self?.searchCollectionView.reloadData()
         }
     }
 }
 
+extension SearchVC: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterPosts(query: searchText)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        filterPosts(query: "")
+    }
+    
+    private func normalizeText(_ text: String) -> String {
+        let allowedCharacters = CharacterSet.alphanumerics
+        let normalizedText = text.lowercased().components(separatedBy: allowedCharacters.inverted).joined()
+        
+        return normalizedText
+    }
+    
+    private func filterPosts(query: String) {
+        if query.isEmpty {
+            filteredPostsData = viewModel.allPostsData
+        } else {
+            let normalizedQuery = normalizeText(query)
+            
+            filteredPostsData = viewModel.allPostsData.filter { post in
+                let normalizedLocation = normalizeText(post.location)
+                let normalizedUsername = normalizeText(post.user.username)
+                
+                return normalizedLocation.contains(normalizedQuery) || normalizedUsername.contains(normalizedQuery)
+            }
+        }
+        searchCollectionView.reloadData()
+    }
+}
+
 extension SearchVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.count
+        return filteredPostsData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchCollectionViewCell.identifier, for: indexPath) as? SearchCollectionViewCell else { return UICollectionViewCell() }
-        if let post = viewModel.singlePost(with: indexPath.row) {
-            cell.configureSearchCollectionViewCell(with: post)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchCollectionViewCell.identifier, for: indexPath) as? SearchCollectionViewCell else {
+            return UICollectionViewCell()
         }
+        
+        let post = filteredPostsData[indexPath.row]
+        cell.configureSearchCollectionViewCell(with: post)
         
         return cell
     }
 }
-

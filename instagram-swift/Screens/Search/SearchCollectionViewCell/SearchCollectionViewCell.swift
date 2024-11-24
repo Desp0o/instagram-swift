@@ -16,6 +16,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         imageView.image = UIImage(named: "multiImages")
         imageView.isHidden = true
+        
         return imageView
     }()
     
@@ -24,6 +25,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        
         return imageView
     }()
     
