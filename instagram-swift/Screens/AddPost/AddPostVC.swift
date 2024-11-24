@@ -163,24 +163,24 @@ class AddPostVC: UIViewController {
     }
 }
 
-
-struct viewControllerRepresentable: UIViewControllerRepresentable {
-    typealias UIViewControllerType = AddPostVC
-    
-
-    
-    
-    func makeUIViewController(context: Context) -> AddPostVC{
-        AddPostVC()
-    }
-    
-    func updateUIViewController(_ uiViewController: AddPostVC, context: Context) {
-        
-    }
-}
-
-struct viewController_Previews: PreviewProvider {
-    static var previews: some View {
-        viewControllerRepresentable()
-    }
-}
+//
+//struct viewControllerRepresentable: UIViewControllerRepresentable {
+//    typealias UIViewControllerType = AddPostVC
+//    
+//
+//    
+//    
+//    func makeUIViewController(context: Context) -> AddPostVC{
+//        AddPostVC()
+//    }
+//    
+//    func updateUIViewController(_ uiViewController: AddPostVC, context: Context) {
+//        
+//    }
+//}
+//
+//struct viewController_Previews: PreviewProvider {
+//    static var previews: some View {
+//        viewControllerRepresentable()
+//    }
+//}
