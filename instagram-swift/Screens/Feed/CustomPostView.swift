@@ -10,8 +10,7 @@ import Foundation
 
 class CustomPostView: UIView {
     var model: PostModel?
-    private var isLiked: Bool = false
-    
+    var toggler = false
     private let postViewModel: PostViewModel
     
     private let emptyView: UIView = {
@@ -139,7 +138,6 @@ class CustomPostView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tag = iconStack.arrangedSubviews.count
-        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
         
         button.addAction(UIAction(handler: { [weak self] _ in
             self?.likePost()
@@ -311,6 +309,7 @@ class CustomPostView: UIView {
         setupTabUserAvatar()
         setupConstraints()
         setupLastLikedStack()
+        collection.reloadData()
     }
     
     private func setupConstraints() {
@@ -375,10 +374,23 @@ class CustomPostView: UIView {
     }
     
     private func likePost() {
-        isLiked.toggle()
-        print(isLiked)
-        likeButton.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        guard var currentModel = model else { return }
+        
+        toggler.toggle()
+        
+        likeButton.setImage(
+            UIImage(named: toggler ? "heartActive" : "heartInactive"),
+            for: .normal
+        )
+        
+        currentModel.isLiked = toggler
+        
+        model = currentModel
+        
+        postViewModel.likePost(postId: currentModel.postId, isLiked: currentModel.isLiked)
+
     }
+
     
     private func navigateToDetails() {
         guard let viewController = findViewController(), let model = model else {
@@ -388,7 +400,6 @@ class CustomPostView: UIView {
         if viewController is DetailsVC { return }
         viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
     }
-    
     
     private func share(post: PostModel) {
         var activityItems: [Any] = []
@@ -403,7 +414,6 @@ class CustomPostView: UIView {
             viewController.present(activityViewController, animated: true)
         }
     }
-    
     
     private func setupBulletStack() {
         bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -474,17 +484,33 @@ class CustomPostView: UIView {
     
     func setupView(with model: PostModel) {
         self.model = model
-        print(model)
         userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
-        isLiked = model.isLiked
         
-        likeButton.setImage(UIImage(named: model.isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        let likedPosts = postViewModel.loadPostsFromUserDefaults()
+        let isLiked = likedPosts.first(where: { $0.postId == model.postId })?.isLiked ?? model.isLiked
+
+        likeButton.setImage(UIImage(
+            named: isLiked ? "heartActive" : "heartInactive"),
+            for: .normal
+        )
+        toggler = isLiked
+
+        postDescription.configureCustomText(
+            text: model.description,
+            color: .primaryBlack,
+            isBold: false,
+            size: 13
+        )
         
-        postDescription.configureCustomText(text: model.description, color: .primaryBlack, isBold: false, size: 13)
-        postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
+        postDate.configureCustomText(
+            text: model.createdAt,
+            color: .secondaryGray,
+            isBold: false,
+            size: 13
+        )
         
         if let avatarUrl = URL(string: model.comments[0].profilePicture) {
             lastLikedAvatar.imageFrom(url: avatarUrl)

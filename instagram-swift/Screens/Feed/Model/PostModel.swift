@@ -5,6 +5,12 @@
 //  Created by Despo on 22.11.24.
 //
 
+
+struct Post: Codable {
+    var postId: Int
+    var isLiked: Bool
+}
+
 struct PostResponse: Codable {
     let response: [PostModel]
 }

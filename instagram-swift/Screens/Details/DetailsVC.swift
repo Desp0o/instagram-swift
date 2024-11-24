@@ -94,7 +94,7 @@ class DetailsVC: UIViewController {
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topBar.topAnchor.constraint(equalTo: view.topAnchor),
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topBar.heightAnchor.constraint(equalToConstant: 112),
+            topBar.heightAnchor.constraint(equalToConstant: 132),
 
             postView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             postView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
