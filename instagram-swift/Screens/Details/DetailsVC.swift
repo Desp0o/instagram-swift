@@ -14,6 +14,7 @@ class DetailsVC: UIViewController {
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
     
@@ -65,24 +66,6 @@ class DetailsVC: UIViewController {
         
         return button
     }()
-    
-    private lazy var collection: UICollectionView = {
-        let collection: UICollectionView
-        let collectionLayout = UICollectionViewFlowLayout()
-        collectionLayout.scrollDirection = .horizontal
-        collectionLayout.itemSize = CGSize(width: 100, height: 20)
-        collectionLayout.minimumLineSpacing = 0
-        collectionLayout.collectionView?.bounces = false
-        collection = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
-        collection.bounces = false
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.register(CommentCell.self, forCellWithReuseIdentifier: "CommentCell")
-        collection.delegate = self
-        collection.dataSource = self
-        collection.showsHorizontalScrollIndicator = false
-        collection.backgroundColor = .systemGreen
-        return collection
-    }()
 
     init(customView: CustomPostView = CustomPostView(frame: .zero), model: PostModel) {
         self.customView = customView
@@ -101,6 +84,7 @@ class DetailsVC: UIViewController {
     }
     
     private func setupUI() {
+        view.backgroundColor = .white
         navigationController?.isNavigationBarHidden = true
         view.addSubview(scrollView)
         
@@ -109,17 +93,12 @@ class DetailsVC: UIViewController {
         topBar.addSubview(barTitle)
         topBar.addSubview(backButton)
         
-        
-        
-        
+        scrollView.addSubview(containerView)
+        containerView.addSubview(customView)
         customView.setupView(with: model)
         
         postView = customView
         postView.translatesAutoresizingMaskIntoConstraints = false
-        
-        scrollView.addSubview(containerView)
-        containerView.addSubview(customView)
-//        containerView.addSubview(collection)
         
         setupConstraints()
         setupButtonAction()
@@ -162,14 +141,7 @@ class DetailsVC: UIViewController {
             postView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
 
             postView.heightAnchor.constraint(equalToConstant: 610),
-
-//            collection.topAnchor.constraint(equalTo: postView.bottomAnchor),
-//            collection.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-//            collection.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-//            collection.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-//            collection.heightAnchor.constraint(equalToConstant: 150)
         ])
-
     }
 
     private func setupButtonAction() {
@@ -177,19 +149,6 @@ class DetailsVC: UIViewController {
             self?.navigationController?.popViewController(animated: true)
         }), for: .touchUpInside)
     }
-    
 }
 
 
-extension DetailsVC:  UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        model.comments.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CommentCell", for: indexPath) as? CommentCell
-        let currentComment = model.comments[indexPath.row]
-        cell?.configureCell(with: currentComment)
-        return cell ?? CommentCell()
-    }
-}
