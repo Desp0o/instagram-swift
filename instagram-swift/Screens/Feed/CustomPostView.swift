@@ -138,7 +138,6 @@ class CustomPostView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tag = iconStack.arrangedSubviews.count
-//        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
         
         button.addAction(UIAction(handler: { [weak self] _ in
             self?.likePost()
@@ -485,9 +484,6 @@ class CustomPostView: UIView {
     
     func setupView(with model: PostModel) {
         self.model = model
-        print("toggler: \(toggler)")
-        print("დასაწყისი: \(model.isLiked)")
-        print(postViewModel.likedPostsArray)
         userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
@@ -501,8 +497,6 @@ class CustomPostView: UIView {
             for: .normal
         )
         toggler = isLiked
-        print("ჩატვირთული: \(model.postId) \(isLiked)")
-        print("toggler: \(model.postId) \(toggler)")
 
         postDescription.configureCustomText(
             text: model.description,

@@ -9,11 +9,6 @@ import NetworkManagerFramework
 import izziDateFormatter
 import Foundation
 
-struct Post: Codable {
-    var postId: Int
-    var isLiked: Bool
-}
-
 protocol FeedViewModelDelegate: AnyObject {
     func didFinishFetchingData()
 }
@@ -89,8 +84,6 @@ final class PostViewModel {
             print("Index \(index) is out of range")
             return nil
         }
-        print("მოდელშ: \(allPostsData[index].isLiked)")
-
         return allPostsData[index]
     }
     
@@ -119,11 +112,9 @@ final class PostViewModel {
         } else {
             posts.append(Post(postId: postId, isLiked: isLiked))
         }
-
+        
         print(posts)
         savePostsToUserDefaults(posts: posts)
-//        UserDefaults.resetStandardUserDefaults()
     }
-    
 }
 
