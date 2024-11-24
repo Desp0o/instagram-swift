@@ -69,3 +69,5 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         multiImagesView.isHidden = model.images.count <= 1
     }
 }
+
+

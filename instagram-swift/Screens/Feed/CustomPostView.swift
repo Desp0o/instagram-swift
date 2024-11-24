@@ -153,7 +153,7 @@ class CustomPostView: UIView {
         button.setImage(UIImage(named:"Comment"), for: .normal)
         
         button.addAction(UIAction(handler: { [weak self] _ in
-            self?.navigateToDetails()
+            self?.showComments()
         }), for: .touchUpInside)
         
         return button
@@ -388,17 +388,22 @@ class CustomPostView: UIView {
         model = currentModel
         
         postViewModel.likePost(postId: currentModel.postId, isLiked: currentModel.isLiked)
-
+        
     }
-
     
-    private func navigateToDetails() {
-        guard let viewController = findViewController(), let model = model else {
-            print("No view controller found")
-            return
+    private func showComments() {
+        guard let model = model else { return }
+        let commentController = CommentsVC(commentsArray: model.comments)
+        commentController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = commentController.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
         }
-        if viewController is DetailsVC { return }
-        viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
+        
+        if let viewController = findViewController() {
+            viewController.present(commentController, animated: true)
+        }
     }
     
     private func share(post: PostModel) {
@@ -491,13 +496,13 @@ class CustomPostView: UIView {
         
         let likedPosts = postViewModel.loadPostsFromUserDefaults()
         let isLiked = likedPosts.first(where: { $0.postId == model.postId })?.isLiked ?? model.isLiked
-
+        
         likeButton.setImage(UIImage(
             named: isLiked ? "heartActive" : "heartInactive"),
-            for: .normal
+                            for: .normal
         )
         toggler = isLiked
-
+        
         postDescription.configureCustomText(
             text: model.description,
             color: .primaryBlack,
