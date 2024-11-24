@@ -135,6 +135,46 @@ class CustomPostView: UIView {
         return stack
     }()
     
+    private lazy var likeButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.likePost()
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private lazy var commentButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named:"Comment"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.navigateToDetails()
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private lazy var shareButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named:"Messanger"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            guard let model = self?.model else { return }
+            self?.share(post: model)
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
     private lazy var bulletsStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -199,7 +239,7 @@ class CustomPostView: UIView {
         return label
     }()
     
-    private lazy var lastComment: UILabel = {
+    private lazy var postDescription: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -256,6 +296,9 @@ class CustomPostView: UIView {
         paginationStack.addArrangedSubview(iconStack)
         paginationStack.addArrangedSubview(bulletsStack)
         paginationStack.addArrangedSubview(emptyView)
+        iconStack.addArrangedSubview(likeButton)
+        iconStack.addArrangedSubview(commentButton)
+        iconStack.addArrangedSubview(shareButton)
         
         postView.addArrangedSubview(likesCountStack)
         likesCountStack.addArrangedSubview(lastLikedAvatar)
@@ -263,15 +306,11 @@ class CustomPostView: UIView {
         
         postView.addSubview(commentStack)
         postView.addSubview(postDate)
+        commentStack.addSubview(postDescription)
         
         setupTabUserAvatar()
         setupConstraints()
-        setupIconStack()
         setupLastLikedStack()
-        
-        DispatchQueue.main.async {
-            self.setupCommentStack()
-        }
     }
     
     private func setupConstraints() {
@@ -323,8 +362,10 @@ class CustomPostView: UIView {
             
             commentStack.topAnchor.constraint(equalTo: likesCountStack.bottomAnchor, constant: 10),
             commentStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            postDescription.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            postDescription.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: -15),
             
-            postDate.topAnchor.constraint(equalTo: commentStack.bottomAnchor, constant: 30),
+            postDate.topAnchor.constraint(equalTo: postDescription.bottomAnchor, constant: 10),
             postDate.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
         ])
     }
@@ -333,36 +374,36 @@ class CustomPostView: UIView {
         userAvatar.layer.cornerRadius = userAvatar.frame.width / 2
     }
     
-    private func setupIconStack() {
-        let iconsArray = ["heartInactive", "Comment", "Messanger"]
+    private func likePost() {
+        isLiked.toggle()
+        print(isLiked)
+        likeButton.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
+    }
+    
+    private func navigateToDetails() {
+        guard let viewController = findViewController(), let model = model else {
+            print("No view controller found")
+            return
+        }
+        if viewController is DetailsVC { return }
+        viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
+    }
+    
+    
+    private func share(post: PostModel) {
+        var activityItems: [Any] = []
         
-        for icon in iconsArray {
-            let iconButton = UIButton()
-            
-            iconButton.tag = iconStack.arrangedSubviews.count
-            iconButton.setImage(UIImage(named: icon), for: .normal)
-            iconStack.addArrangedSubview(iconButton)
-            
-            iconButton.addAction(UIAction(handler: { [weak self] _ in
-                self?.buttonAction(sender: iconButton.self)
-            }), for: .touchUpInside)
+        if let fakeURL = URL(string: "https://example.com/post/\(post.postId)") {
+            activityItems.append(fakeURL)
+        }
+        
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        if let viewController = findViewController() {
+            viewController.present(activityViewController, animated: true)
         }
     }
     
-    private func buttonAction(sender: UIButton) {
-        if sender.tag == 0 {
-            isLiked.toggle()
-            print(isLiked)
-            sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
-            
-            guard let viewController = findViewController(), let model = model  else {
-                print("No view controller found")
-                return
-            }
-            
-            viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
-        }
-    }
     
     private func setupBulletStack() {
         bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -431,32 +472,18 @@ class CustomPostView: UIView {
                                 animated: false)
     }
     
-    private func setupCommentStack() {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.createAttributedText(
-            text: "\(commentAuthor.text ?? "") \(lastComment.text ?? "")",
-            firstWordColor: .primaryBlack,
-            restColor: .primaryBlack,
-            firstWordFont: .boldSystemFont(ofSize: 13),
-            restFont: .systemFont(ofSize: 13)
-        )
-        
-        commentStack.addSubview(label)
-    }
-    
     func setupView(with model: PostModel) {
         self.model = model
+        print(model)
         userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
-        lastComment.configureCustomText(text: model.comments.first?.comment ?? "", color: .primaryBlack, isBold: true, size: 13)
-        commentAuthor.text = model.comments.first?.username ?? ""
+        
+        likeButton.setImage(UIImage(named: model.isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        
+        postDescription.configureCustomText(text: model.description, color: .primaryBlack, isBold: false, size: 13)
         postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
         
         if let avatarUrl = URL(string: model.comments[0].profilePicture) {
