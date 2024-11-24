@@ -26,6 +26,12 @@ final class PostViewModel {
     
     weak var delegate: FeedViewModelDelegate?
     
+    var likedPostsArray: [Post] {
+        let arrary = loadPostsFromUserDefaults()
+        
+        return arrary
+    }
+    
     init(networkService: NetworkServiceProtocol = NetworkService(), dateFormatter: IzziDateFormatterProtocol = IzziDateFormatter()) {
         self.networkService = networkService
         self.dateFormatter = dateFormatter
@@ -112,5 +118,7 @@ final class PostViewModel {
             
             savePostsToUserDefaults(posts: posts)
         }
+    
+    
 }
 

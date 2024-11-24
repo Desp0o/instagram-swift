@@ -378,6 +378,9 @@ class CustomPostView: UIView {
         isLiked.toggle()
         print(isLiked)
         likeButton.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        
+        guard let model = model else { return }
+        postViewModel.likePost(postId: model.postId, isLiked: !model.isLiked)
     }
     
     private func navigateToDetails() {
@@ -474,17 +477,31 @@ class CustomPostView: UIView {
     
     func setupView(with model: PostModel) {
         self.model = model
-        print(model)
+        print(postViewModel.likedPostsArray)
         userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
         
-        likeButton.setImage(UIImage(named: model.isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        likeButton.setImage(UIImage(
+            named: model.isLiked ? "heartActive" : "heartInactive"),
+            for: .normal
+        )
         
-        postDescription.configureCustomText(text: model.description, color: .primaryBlack, isBold: false, size: 13)
-        postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
+        postDescription.configureCustomText(
+            text: model.description,
+            color: .primaryBlack,
+            isBold: false,
+            size: 13
+        )
+        
+        postDate.configureCustomText(
+            text: model.createdAt,
+            color: .secondaryGray,
+            isBold: false,
+            size: 13
+        )
         
         if let avatarUrl = URL(string: model.comments[0].profilePicture) {
             lastLikedAvatar.imageFrom(url: avatarUrl)
