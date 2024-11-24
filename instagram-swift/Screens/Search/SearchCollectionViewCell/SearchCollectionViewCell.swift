@@ -15,6 +15,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.image = UIImage(named: "multiImages")
+        imageView.isHidden = true
         return imageView
     }()
     
@@ -40,10 +41,10 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     private func setUpCellUI() {
         backgroundColor = .clear
         
-        contentView.addSubview(photoImageView)
+        addSubview(photoImageView)
+        addSubview(multiImagesView)
         
         setUpCellConstraints()
-        setupMultiImageView()
     }
     
     private func setUpCellConstraints() {
@@ -51,15 +52,20 @@ final class SearchCollectionViewCell: UICollectionViewCell {
             photoImageView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
             photoImageView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor),
             photoImageView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
-            photoImageView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
+            photoImageView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
+            
+            multiImagesView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            multiImagesView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            multiImagesView.widthAnchor.constraint(equalToConstant: 20),
+            multiImagesView.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
     
-    private func setupMultiImageView() {
+    public func configureSearchCollectionViewCell(with model: PostModel) {
+        if let imageUrl = model.images.first, let url = URL(string: imageUrl) {
+            photoImageView.imageFrom(url: url)
+        }
         
-    }
-    
-    public func configureSearchCollectionViewCell(with image: String) {
-        
+        multiImagesView.isHidden = model.images.count <= 1
     }
 }
