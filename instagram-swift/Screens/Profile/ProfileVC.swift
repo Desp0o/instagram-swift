@@ -38,7 +38,7 @@ class ProfileVC: UIViewController {
     private lazy var privateIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "homeActive")
+        imageView.image = UIImage(named: "Private")
         imageView.contentMode = .scaleAspectFit
         
         return imageView
@@ -65,9 +65,10 @@ class ProfileVC: UIViewController {
     private lazy var profileImage: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .blue
-        imageView.contentMode = .scaleToFill
+        imageView.image = UIImage(named: "profilePicture")
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 86 / 2
+        imageView.clipsToBounds = true
         
         return imageView
     }()

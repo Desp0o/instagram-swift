@@ -30,9 +30,10 @@ class ProfileSettingsVC: UIViewController {
     var profilePicture: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .blue
-        imageView.contentMode = .scaleToFill
-        imageView.layer.cornerRadius = 86 / 2
+        imageView.image = UIImage(named: "profilePicture")
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 43
+        imageView.clipsToBounds = true
         
         return imageView
     }()
@@ -373,8 +374,4 @@ class ProfileSettingsVC: UIViewController {
             self?.navigationController?.popViewController(animated: true)
         }), for: .touchUpInside)
     }
-}
-
-#Preview {
-    ProfileSettingsVC()
 }
