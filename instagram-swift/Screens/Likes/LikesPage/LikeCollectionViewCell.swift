@@ -18,6 +18,8 @@ class LikeCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    private var isFollowing = false
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -49,6 +51,9 @@ class LikeCollectionViewCell: UICollectionViewCell {
         followButton.layer.cornerRadius = 5
         followButton.layer.borderWidth = 1
         followButton.layer.borderColor = UIColor.systemBlue.cgColor
+        followButton.addAction(UIAction(handler: {[weak self] _ in
+            self?.didTapFollowButton()
+        }), for: .touchUpInside)
         
         let actionAndTimeStackView = UIStackView(arrangedSubviews: [actionLabel, timeLabel])
         actionAndTimeStackView.axis = .horizontal
@@ -88,8 +93,25 @@ class LikeCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func didTapFollowButton() {
+        isFollowing.toggle()
+        
+        if isFollowing {
+            followButton.setTitle("Following", for: .normal)
+            followButton.setTitleColor(.white, for: .normal)
+            followButton.backgroundColor = .systemGray
+            followButton.layer.borderColor = UIColor.black.cgColor
+        } else {
+            followButton.setTitle("Follow", for: .normal)
+            followButton.setTitleColor(.white, for: .normal)
+            followButton.backgroundColor = .systemBlue
+            followButton.layer.borderColor = UIColor.systemBlue.cgColor
+        }
+    }
+    
     func configure(with likeItem: LikeItem) {
-        profileImageView.image = UIImage(named: likeItem.profileImage)
+        guard let url = URL(string: likeItem.profileImage) else {  return }
+        profileImageView.imageFrom(url: url)
         
         usernameLabel.configureCustomText(
             text: likeItem.username,
@@ -110,7 +132,8 @@ class LikeCollectionViewCell: UICollectionViewCell {
         timeLabel.text = likeItem.time
         
         if let postImage = likeItem.postImage {
-            postImageView.image = UIImage(named: postImage)
+            guard let url = URL(string: likeItem.postImage ?? "") else { return }
+            postImageView.imageFrom(url: url)
             postImageView.isHidden = false
         } else {
             postImageView.isHidden = true
