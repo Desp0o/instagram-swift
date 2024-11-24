@@ -11,6 +11,15 @@ class ProfileVC: UIViewController {
     
     private var viewModel = ProfileViewModel()
     
+    init(viewModel: ProfileViewModel  = ProfileViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private lazy var userNameViewWithIcon: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -386,22 +395,33 @@ class ProfileVC: UIViewController {
         bioLabel.text = viewModel.bio
         linkLabel.text = viewModel.link
     }
+    
+    func didFinishFetchingData() {
+        postsCollectionView.reloadData()
+    }
 }
 
 extension ProfileVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        30
+        viewModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PostCollectionViewCell", for: indexPath) as? PostCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
-        cell.postImage.load(url: URL(string: "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8=")!)
-        cell.postImage.image = UIImage(systemName: "photo")
-        
+        if let currentPost = viewModel.singlePost(with: indexPath.row),
+           let imageUrlString = currentPost.images.first,
+           let imageUrl = URL(string: imageUrlString) {
+            cell.postImage.imageFrom(url: imageUrl)
+        }
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let currentPost = viewModel.singlePost(with: indexPath.row) {
+            navigationController?.pushViewController(DetailsVC( model: currentPost), animated: true)
+        }
     }
 }
 
