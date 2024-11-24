@@ -10,7 +10,7 @@ import Foundation
 
 class CustomPostView: UIView {
     var model: PostModel?
-    
+    var toggler = false
     private let postViewModel: PostViewModel
     
     private let emptyView: UIView = {
@@ -138,7 +138,7 @@ class CustomPostView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tag = iconStack.arrangedSubviews.count
-        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
+//        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
         
         button.addAction(UIAction(handler: { [weak self] _ in
             self?.likePost()
@@ -377,14 +377,21 @@ class CustomPostView: UIView {
     private func likePost() {
         guard var currentModel = model else { return }
         
-        currentModel.isLiked.toggle()
+        toggler.toggle()
         
-        likeButton.setImage(UIImage(named: currentModel.isLiked ? "heartActive" : "heartInactive"), for: .normal)
-
-        postViewModel.likePost(postId: currentModel.postId, isLiked: currentModel.isLiked)
+        likeButton.setImage(
+            UIImage(named: toggler ? "heartActive" : "heartInactive"),
+            for: .normal
+        )
+        
+        currentModel.isLiked = toggler
         
         model = currentModel
+        
+        postViewModel.likePost(postId: currentModel.postId, isLiked: currentModel.isLiked)
+
     }
+
     
     private func navigateToDetails() {
         guard let viewController = findViewController(), let model = model else {
@@ -478,6 +485,8 @@ class CustomPostView: UIView {
     
     func setupView(with model: PostModel) {
         self.model = model
+        print("toggler: \(toggler)")
+        print("დასაწყისი: \(model.isLiked)")
         print(postViewModel.likedPostsArray)
         userName.text = model.user.username
         location.text = model.location
@@ -485,15 +494,16 @@ class CustomPostView: UIView {
         likeCount.text = "\(model.likes.likeCounts)"
         
         let likedPosts = postViewModel.loadPostsFromUserDefaults()
+        let isLiked = likedPosts.first(where: { $0.postId == model.postId })?.isLiked ?? model.isLiked
 
-            
-            let isLiked = likedPosts.first(where: { $0.postId == model.postId })?.isLiked ?? model.isLiked
+        likeButton.setImage(UIImage(
+            named: isLiked ? "heartActive" : "heartInactive"),
+            for: .normal
+        )
+        toggler = isLiked
+        print("ჩატვირთული: \(model.postId) \(isLiked)")
+        print("toggler: \(model.postId) \(toggler)")
 
-            likeButton.setImage(UIImage(
-                named: isLiked ? "heartActive" : "heartInactive"),
-                for: .normal
-            )
-        
         postDescription.configureCustomText(
             text: model.description,
             color: .primaryBlack,

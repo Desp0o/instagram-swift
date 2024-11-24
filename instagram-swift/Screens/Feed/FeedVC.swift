@@ -69,6 +69,10 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
         setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        collection.reloadData()
+    }
+    
     private func setupUI() {
         view.backgroundColor = .white
         navigationController?.isNavigationBarHidden = true

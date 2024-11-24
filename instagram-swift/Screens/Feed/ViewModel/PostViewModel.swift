@@ -89,6 +89,8 @@ final class PostViewModel {
             print("Index \(index) is out of range")
             return nil
         }
+        print("მოდელშ: \(allPostsData[index].isLiked)")
+
         return allPostsData[index]
     }
     
@@ -111,16 +113,16 @@ final class PostViewModel {
         var posts = loadPostsFromUserDefaults()
         
         if let index = posts.firstIndex(where: { $0.postId == postId }) {
-            if posts[index].isLiked == isLiked {
-                posts.remove(at: index)
-            } else {
+            if posts[index].isLiked != isLiked {
                 posts[index].isLiked = isLiked
             }
         } else {
             posts.append(Post(postId: postId, isLiked: isLiked))
         }
+
         print(posts)
         savePostsToUserDefaults(posts: posts)
+//        UserDefaults.resetStandardUserDefaults()
     }
     
 }
