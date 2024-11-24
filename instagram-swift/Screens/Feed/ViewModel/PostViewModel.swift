@@ -29,7 +29,7 @@ final class PostViewModel {
     }
     
     func fetchData() {
-        let apiLink = "http://localhost:3000/all-posts"
+        let apiLink = "http://localhost:3000/v1/users/self/feed"
         Task {
             do {
                 let fetchedData: PostResponse = try await networkService.fetchData(urlString: apiLink, headers: [:])

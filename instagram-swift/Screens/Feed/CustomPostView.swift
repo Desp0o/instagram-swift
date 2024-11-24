@@ -199,7 +199,7 @@ class CustomPostView: UIView {
         return label
     }()
     
-    private lazy var lastComment: UILabel = {
+    private lazy var postDescription: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -350,19 +350,43 @@ class CustomPostView: UIView {
     }
     
     private func buttonAction(sender: UIButton) {
-        if sender.tag == 0 {
+        switch sender.tag {
+        case 0:
             isLiked.toggle()
             print(isLiked)
             sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
             
-            guard let viewController = findViewController(), let model = model  else {
+        case 1:
+            guard let viewController = findViewController(), let model = model else {
                 print("No view controller found")
                 return
             }
-            
+            if viewController is DetailsVC { return }
             viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
+            
+        case 2:
+            guard let model = model else { return }
+            share(post: model)
+            
+        default:
+            print("Unhandled button action for tag: \(sender.tag)")
         }
     }
+    
+    private func share(post: PostModel) {
+        var activityItems: [Any] = []
+
+        if let fakeURL = URL(string: "https://example.com/post/\(post.postId)") {
+                activityItems.append(fakeURL)
+            }
+        
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        if let viewController = findViewController() {
+            viewController.present(activityViewController, animated: true)
+        }
+    }
+
     
     private func setupBulletStack() {
         bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -433,12 +457,11 @@ class CustomPostView: UIView {
     
     private func setupCommentStack() {
         let label = UILabel()
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.createAttributedText(
-            text: "\(commentAuthor.text ?? "") \(lastComment.text ?? "")",
+            text: "\(userName.text ?? "") \(postDescription.text ?? "")",
             firstWordColor: .primaryBlack,
             restColor: .primaryBlack,
             firstWordFont: .boldSystemFont(ofSize: 13),
@@ -450,13 +473,13 @@ class CustomPostView: UIView {
     
     func setupView(with model: PostModel) {
         self.model = model
+        print(model)
         userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
-        lastComment.configureCustomText(text: model.comments.first?.comment ?? "", color: .primaryBlack, isBold: true, size: 13)
-        commentAuthor.text = model.comments.first?.username ?? ""
+        postDescription.text = model.description
         postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
         
         if let avatarUrl = URL(string: model.comments[0].profilePicture) {
