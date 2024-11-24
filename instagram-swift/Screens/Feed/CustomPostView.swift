@@ -70,7 +70,7 @@ class CustomPostView: UIView {
     private lazy var postImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.backgroundColor = .clear
+        image.backgroundColor = .white
         image.image = UIImage(named: "Rectangle")
         image.contentMode = .scaleToFill
         
@@ -133,6 +133,46 @@ class CustomPostView: UIView {
         stack.alignment = .fill
         stack.spacing = 18
         return stack
+    }()
+    
+    private lazy var likeButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.likePost()
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private lazy var commentButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named:"Comment"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.navigateToDetails()
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private lazy var shareButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named:"Messanger"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            guard let model = self?.model else { return }
+            self?.share(post: model)
+        }), for: .touchUpInside)
+        
+        return button
     }()
     
     private lazy var bulletsStack: UIStackView = {
@@ -199,7 +239,7 @@ class CustomPostView: UIView {
         return label
     }()
     
-    private lazy var lastComment: UILabel = {
+    private lazy var postDescription: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -256,6 +296,9 @@ class CustomPostView: UIView {
         paginationStack.addArrangedSubview(iconStack)
         paginationStack.addArrangedSubview(bulletsStack)
         paginationStack.addArrangedSubview(emptyView)
+        iconStack.addArrangedSubview(likeButton)
+        iconStack.addArrangedSubview(commentButton)
+        iconStack.addArrangedSubview(shareButton)
         
         postView.addArrangedSubview(likesCountStack)
         likesCountStack.addArrangedSubview(lastLikedAvatar)
@@ -263,15 +306,11 @@ class CustomPostView: UIView {
         
         postView.addSubview(commentStack)
         postView.addSubview(postDate)
+        commentStack.addSubview(postDescription)
         
         setupTabUserAvatar()
         setupConstraints()
-        setupIconStack()
         setupLastLikedStack()
-        
-        DispatchQueue.main.async {
-            self.setupCommentStack()
-        }
     }
     
     private func setupConstraints() {
@@ -318,13 +357,15 @@ class CustomPostView: UIView {
             likesCountStack.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: 0),
             likesCountStack.bottomAnchor.constraint(equalTo: postView.bottomAnchor),
             
-            lastLikedAvatar.heightAnchor.constraint(equalToConstant: 18),
-            lastLikedAvatar.widthAnchor.constraint(equalToConstant: 18),
+            lastLikedAvatar.heightAnchor.constraint(equalToConstant: 24),
+            lastLikedAvatar.widthAnchor.constraint(equalToConstant: 24),
             
             commentStack.topAnchor.constraint(equalTo: likesCountStack.bottomAnchor, constant: 10),
             commentStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            postDescription.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            postDescription.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: -15),
             
-            postDate.topAnchor.constraint(equalTo: commentStack.bottomAnchor, constant: 30),
+            postDate.topAnchor.constraint(equalTo: postDescription.bottomAnchor, constant: 10),
             postDate.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
         ])
     }
@@ -333,30 +374,36 @@ class CustomPostView: UIView {
         userAvatar.layer.cornerRadius = userAvatar.frame.width / 2
     }
     
-    private func setupIconStack() {
-        let iconsArray = ["heartInactive", "Comment", "Messanger"]
+    private func likePost() {
+        isLiked.toggle()
+        print(isLiked)
+        likeButton.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
+    }
+    
+    private func navigateToDetails() {
+        guard let viewController = findViewController(), let model = model else {
+            print("No view controller found")
+            return
+        }
+        if viewController is DetailsVC { return }
+        viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
+    }
+    
+    
+    private func share(post: PostModel) {
+        var activityItems: [Any] = []
         
-        for icon in iconsArray {
-            let iconButton = UIButton()
-            
-            iconButton.tag = iconStack.arrangedSubviews.count
-            iconButton.setImage(UIImage(named: icon), for: .normal)
-            iconStack.addArrangedSubview(iconButton)
-            
-            iconButton.addAction(UIAction(handler: { [weak self] _ in
-                self?.buttonAction(sender: iconButton.self)
-            }), for: .touchUpInside)
+        if let fakeURL = URL(string: "https://example.com/post/\(post.postId)") {
+            activityItems.append(fakeURL)
+        }
+        
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        if let viewController = findViewController() {
+            viewController.present(activityViewController, animated: true)
         }
     }
     
-    private func buttonAction(sender: UIButton) {
-        if sender.tag == 0 {
-            isLiked.toggle()
-            print(isLiked)
-            
-            sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
-        }
-    }
     
     private func setupBulletStack() {
         bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -366,7 +413,7 @@ class CustomPostView: UIView {
         for i in 0..<imageCount {
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
-            view.backgroundColor = i == currentPage ? .systemBlue : .systemGray4
+            view.backgroundColor = i == currentPage ? .systemBlue : .secondaryGray
             
             NSLayoutConstraint.activate([
                 view.widthAnchor.constraint(equalToConstant: 8),
@@ -379,13 +426,19 @@ class CustomPostView: UIView {
         }
     }
     
+    static func configureView(with model: PostModel) -> CustomPostView {
+        let viewController = CustomPostView(frame: .zero)
+        viewController.model = model
+        return viewController
+    }
+    
     private func updateBullets() {
         guard let imageCount = model?.images.count,
               imageCount > 1,
               bulletsStack.arrangedSubviews.count == imageCount else { return }
         
         for (index, view) in bulletsStack.arrangedSubviews.enumerated() {
-            view.backgroundColor = index == currentPage ? .systemBlue : .systemGray4
+            view.backgroundColor = index == currentPage ? .customBlue : .secondaryGray
         }
     }
     
@@ -414,36 +467,29 @@ class CustomPostView: UIView {
     
     private func resetCollectionView() {
         currentPage = 0
-        collection.contentOffset = .zero
-    }
-    
-    private func setupCommentStack() {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.createAttributedText(
-            text: "\(commentAuthor.text ?? "") \(lastComment.text ?? "")",
-            firstWordColor: .primaryBlack,
-            restColor: .primaryBlack,
-            firstWordFont: .boldSystemFont(ofSize: 13),
-            restFont: .systemFont(ofSize: 13)
-        )
-        
-        commentStack.addSubview(label)
+        collection.scrollToItem(at: IndexPath(item: 0, section: 0),
+                                at: .top,
+                                animated: false)
     }
     
     func setupView(with model: PostModel) {
         self.model = model
+        print(model)
         userName.text = model.user.username
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
-        lastComment.configureCustomText(text: model.comments.first?.comment ?? "", color: .primaryBlack, isBold: true, size: 13)
-        commentAuthor.text = model.comments.first?.username ?? ""
+        
+        likeButton.setImage(UIImage(named: model.isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        
+        postDescription.configureCustomText(text: model.description, color: .primaryBlack, isBold: false, size: 13)
         postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
+        
+        if let avatarUrl = URL(string: model.comments[0].profilePicture) {
+            lastLikedAvatar.imageFrom(url: avatarUrl)
+            lastLikedAvatar.layer.cornerRadius = 12
+        }
         
         if let url = URL(string: model.user.profilePicture) {
             userAvatar.imageFrom(url: url)
@@ -483,5 +529,19 @@ extension CustomPostView: UICollectionViewDelegate, UICollectionViewDataSource, 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let page = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
         updateImageCounter(page: page)
+    }
+}
+
+
+extension UIView {
+    func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let currentResponder = responder {
+            if let viewController = currentResponder as? UIViewController {
+                return viewController
+            }
+            responder = currentResponder.next
+        }
+        return nil
     }
 }

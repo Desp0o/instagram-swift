@@ -21,10 +21,16 @@ class TabBarController: UITabBarController {
         self.tabBar.unselectedItemTintColor = .primaryBlack
         self.tabBar.backgroundColor = .tabBarCol
         
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = UIColor.white
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        
         let topLine = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
         topLine.backgroundColor = UIColor.secondaryGray
         topLine.autoresizingMask = [.flexibleWidth]
-
+        tabBar.isTranslucent = true
         tabBar.addSubview(topLine)
     }
     
