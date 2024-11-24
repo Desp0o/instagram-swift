@@ -263,15 +263,12 @@ class CustomPostView: UIView {
         
         postView.addSubview(commentStack)
         postView.addSubview(postDate)
+        commentStack.addSubview(postDescription)
         
         setupTabUserAvatar()
         setupConstraints()
         setupIconStack()
         setupLastLikedStack()
-        
-        DispatchQueue.main.async {
-            self.setupCommentStack()
-        }
     }
     
     private func setupConstraints() {
@@ -323,8 +320,10 @@ class CustomPostView: UIView {
             
             commentStack.topAnchor.constraint(equalTo: likesCountStack.bottomAnchor, constant: 10),
             commentStack.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            postDescription.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
+            postDescription.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: -15),
             
-            postDate.topAnchor.constraint(equalTo: commentStack.bottomAnchor, constant: 30),
+            postDate.topAnchor.constraint(equalTo: postDescription.bottomAnchor, constant: 10),
             postDate.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 15),
         ])
     }
@@ -375,10 +374,10 @@ class CustomPostView: UIView {
     
     private func share(post: PostModel) {
         var activityItems: [Any] = []
-
+        
         if let fakeURL = URL(string: "https://example.com/post/\(post.postId)") {
-                activityItems.append(fakeURL)
-            }
+            activityItems.append(fakeURL)
+        }
         
         let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         
@@ -386,7 +385,7 @@ class CustomPostView: UIView {
             viewController.present(activityViewController, animated: true)
         }
     }
-
+    
     
     private func setupBulletStack() {
         bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -455,22 +454,6 @@ class CustomPostView: UIView {
                                 animated: false)
     }
     
-    private func setupCommentStack() {
-        let label = UILabel()
-        label.numberOfLines = 2
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.createAttributedText(
-            text: "\(userName.text ?? "") \(postDescription.text ?? "")",
-            firstWordColor: .primaryBlack,
-            restColor: .primaryBlack,
-            firstWordFont: .boldSystemFont(ofSize: 13),
-            restFont: .systemFont(ofSize: 13)
-        )
-        
-        commentStack.addSubview(label)
-    }
-    
     func setupView(with model: PostModel) {
         self.model = model
         print(model)
@@ -479,7 +462,7 @@ class CustomPostView: UIView {
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
-        postDescription.text = model.description
+        postDescription.configureCustomText(text: model.description, color: .primaryBlack, isBold: false, size: 13)
         postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
         
         if let avatarUrl = URL(string: model.comments[0].profilePicture) {
