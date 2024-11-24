@@ -25,7 +25,7 @@ final class SearchVC: UIViewController {
         return collectionView
     }()
     
-    private let viewModel = FeedViewModel()
+    private let viewModel = PostViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
