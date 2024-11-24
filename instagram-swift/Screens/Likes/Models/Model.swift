@@ -1,4 +1,4 @@
-struct LikeItem {
+struct LikeItem: Codable {
     let profileImage: String
     let username: String
     let action: String
