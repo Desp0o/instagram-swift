@@ -22,6 +22,7 @@ final class SearchVC: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(SearchCollectionViewCell.self, forCellWithReuseIdentifier: SearchCollectionViewCell.identifier)
         collectionView.backgroundColor = .clear
+        collectionView.isUserInteractionEnabled = true
         collectionView.delegate = self
         collectionView.dataSource = self
         
@@ -41,11 +42,6 @@ final class SearchVC: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        
-        view.addGestureRecognizer(tapGesture)
-        
         view.addSubview(searchBar)
         view.addSubview(searchCollectionView)
         
@@ -81,15 +77,32 @@ final class SearchVC: UIViewController {
             let group = NSCollectionLayoutGroup.custom(layoutSize: groupSize) { environment in
                 var items: [NSCollectionLayoutGroupCustomItem] = []
                 
-                let largeItemFrame = CGRect(x: 0, y: 0, width: environment.container.contentSize.width * 0.66, height: 300)
+                let spacing: CGFloat = 4
+                
+                let largeItemFrame = CGRect(
+                    x: 0,
+                    y: 0,
+                    width: environment.container.contentSize.width * 0.66,
+                    height: 300
+                )
                 let largeItem = NSCollectionLayoutGroupCustomItem(frame: largeItemFrame)
                 items.append(largeItem)
                 
-                let smallTopItemFrame = CGRect(x: environment.container.contentSize.width * 0.66 + 4, y: 0, width: environment.container.contentSize.width * 0.34 - 4, height: 148)
+                let smallTopItemFrame = CGRect(
+                    x: environment.container.contentSize.width * 0.66 + spacing,
+                    y: 0,
+                    width: environment.container.contentSize.width * 0.34 - spacing,
+                    height: 148
+                )
                 let smallTopItem = NSCollectionLayoutGroupCustomItem(frame: smallTopItemFrame)
                 items.append(smallTopItem)
                 
-                let smallBottomItemFrame = CGRect(x: environment.container.contentSize.width * 0.66 + 4, y: 152, width: environment.container.contentSize.width * 0.34 - 4, height: 148)
+                let smallBottomItemFrame = CGRect(
+                    x: environment.container.contentSize.width * 0.66 + spacing,
+                    y: 152 + spacing,
+                    width: environment.container.contentSize.width * 0.34 - spacing,
+                    height: 148
+                )
                 let smallBottomItem = NSCollectionLayoutGroupCustomItem(frame: smallBottomItemFrame)
                 items.append(smallBottomItem)
                 
@@ -98,10 +111,11 @@ final class SearchVC: UIViewController {
             
             let section = NSCollectionLayoutSection(group: group)
             section.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
-            
+            section.interGroupSpacing = 8 
             return section
         }
     }
+    
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
@@ -152,6 +166,8 @@ extension SearchVC: UISearchBarDelegate {
 }
 
 extension SearchVC: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return filteredPostsData.count
     }
@@ -165,5 +181,10 @@ extension SearchVC: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.configureSearchCollectionViewCell(with: post)
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let post = filteredPostsData[indexPath.row]
+        navigationController?.pushViewController(DetailsVC(model: post), animated: true)
     }
 }
