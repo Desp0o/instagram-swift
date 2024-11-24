@@ -9,6 +9,11 @@ import NetworkManagerFramework
 import izziDateFormatter
 import Foundation
 
+struct Post: Codable {
+    var postId: Int
+    var isLiked: Bool
+}
+
 protocol FeedViewModelDelegate: AnyObject {
     func didFinishFetchingData()
 }
@@ -30,10 +35,10 @@ final class PostViewModel {
     
     func fetchData() {
         let apiLink = "http://localhost:3000/v1/users/self/feed"
+        
         Task {
             do {
                 let fetchedData: PostResponse = try await networkService.fetchData(urlString: apiLink, headers: [:])
-                
                 var formatedData = fetchedData.response
                 formatedData = formatedData.map { [weak self] post in
                     guard let self = self else { return post }
@@ -80,5 +85,32 @@ final class PostViewModel {
         }
         return allPostsData[index]
     }
+    
+    func loadPostsFromUserDefaults() -> [Post] {
+        if let data = UserDefaults.standard.data(forKey: "posts"),
+           let posts = try? JSONDecoder().decode([Post].self, from: data) {
+            return posts
+        } else {
+            return []
+        }
+    }
+    
+    func savePostsToUserDefaults(posts: [Post]) {
+        if let data = try? JSONEncoder().encode(posts) {
+            UserDefaults.standard.set(data, forKey: "posts")
+        }
+    }
+    
+    func likePost(postId: Int, isLiked: Bool) {
+            var posts = loadPostsFromUserDefaults()
+            
+            if let index = posts.firstIndex(where: { $0.postId == postId }) {
+                posts[index].isLiked = isLiked
+            } else {
+                posts.append(Post(postId: postId, isLiked: isLiked))
+            }
+            
+            savePostsToUserDefaults(posts: posts)
+        }
 }
 

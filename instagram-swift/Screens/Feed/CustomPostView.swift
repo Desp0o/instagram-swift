@@ -135,6 +135,46 @@ class CustomPostView: UIView {
         return stack
     }()
     
+    private lazy var likeButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named: model?.isLiked ?? false ? "heartActive" : "heartInactive"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.likePost()
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private lazy var commentButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named:"Comment"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.navigateToDetails()
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private lazy var shareButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tag = iconStack.arrangedSubviews.count
+        button.setImage(UIImage(named:"Messanger"), for: .normal)
+        
+        button.addAction(UIAction(handler: { [weak self] _ in
+            guard let model = self?.model else { return }
+            self?.share(post: model)
+        }), for: .touchUpInside)
+        
+        return button
+    }()
+    
     private lazy var bulletsStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -256,6 +296,9 @@ class CustomPostView: UIView {
         paginationStack.addArrangedSubview(iconStack)
         paginationStack.addArrangedSubview(bulletsStack)
         paginationStack.addArrangedSubview(emptyView)
+        iconStack.addArrangedSubview(likeButton)
+        iconStack.addArrangedSubview(commentButton)
+        iconStack.addArrangedSubview(shareButton)
         
         postView.addArrangedSubview(likesCountStack)
         likesCountStack.addArrangedSubview(lastLikedAvatar)
@@ -267,7 +310,6 @@ class CustomPostView: UIView {
         
         setupTabUserAvatar()
         setupConstraints()
-        setupIconStack()
         setupLastLikedStack()
     }
     
@@ -332,45 +374,21 @@ class CustomPostView: UIView {
         userAvatar.layer.cornerRadius = userAvatar.frame.width / 2
     }
     
-    private func setupIconStack() {
-        let iconsArray = ["heartInactive", "Comment", "Messanger"]
-        
-        for icon in iconsArray {
-            let iconButton = UIButton()
-            
-            iconButton.tag = iconStack.arrangedSubviews.count
-            iconButton.setImage(UIImage(named: icon), for: .normal)
-            iconStack.addArrangedSubview(iconButton)
-            
-            iconButton.addAction(UIAction(handler: { [weak self] _ in
-                self?.buttonAction(sender: iconButton.self)
-            }), for: .touchUpInside)
-        }
+    private func likePost() {
+        isLiked.toggle()
+        print(isLiked)
+        likeButton.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
     }
     
-    private func buttonAction(sender: UIButton) {
-        switch sender.tag {
-        case 0:
-            isLiked.toggle()
-            print(isLiked)
-            sender.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
-            
-        case 1:
-            guard let viewController = findViewController(), let model = model else {
-                print("No view controller found")
-                return
-            }
-            if viewController is DetailsVC { return }
-            viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
-            
-        case 2:
-            guard let model = model else { return }
-            share(post: model)
-            
-        default:
-            print("Unhandled button action for tag: \(sender.tag)")
+    private func navigateToDetails() {
+        guard let viewController = findViewController(), let model = model else {
+            print("No view controller found")
+            return
         }
+        if viewController is DetailsVC { return }
+        viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
     }
+    
     
     private func share(post: PostModel) {
         var activityItems: [Any] = []
@@ -462,6 +480,9 @@ class CustomPostView: UIView {
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
         isLiked = model.isLiked
+        
+        likeButton.setImage(UIImage(named: model.isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        
         postDescription.configureCustomText(text: model.description, color: .primaryBlack, isBold: false, size: 13)
         postDate.configureCustomText(text: model.createdAt, color: .secondaryGray, isBold: false, size: 13)
         
