@@ -211,26 +211,5 @@ class LoginVC: UIViewController {
         usernameTextField.text = ""
         passwordTextField.text = ""
     }
-    
 }
 
-
-struct viewControllerRepresentable: UIViewControllerRepresentable {
-    
-    typealias UIViewControllerType = LoginVC
-    
-    
-    func makeUIViewController(context: Context) -> LoginVC {
-        LoginVC()
-    }
-    
-    func updateUIViewController(_ uiViewController: LoginVC, context: Context) {
-        
-    }
-}
-
-struct viewController_Previews: PreviewProvider {
-    static var previews: some View {
-        viewControllerRepresentable()
-    }
-}
