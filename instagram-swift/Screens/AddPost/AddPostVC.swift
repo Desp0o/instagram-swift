@@ -8,14 +8,10 @@
 import UIKit
 import SwiftUI
 
-class AddPostVC: UIViewController {
+class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.showsVerticalScrollIndicator = false
-        return scrollView
-    }()
+    private var photoPickerHandler: PhotoPickerHandler?
+    
     private lazy var photoView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -23,7 +19,10 @@ class AddPostVC: UIViewController {
     }()
     private lazy var dismissButton: UIButton = {
         let button = UIButton()
-        button.configureWith(title: "X", fontSize: 28, titleColor: .white)
+        button.configureWith(title: "x", fontSize: 20, titleColor: .white)
+        button.addAction(UIAction(handler: { [weak self] action in
+            self?.dismiss()
+        }), for: .touchUpInside)
         return button
     
     }()
@@ -32,16 +31,22 @@ class AddPostVC: UIViewController {
         label.configureCustomText(text: "New post", color: .white, isBold: true, size: 20)
         return label
     }()
-    private lazy var nextButton: UIButton = {
+    private lazy var AddButton: UIButton = {
         let button = UIButton()
-        button.configureWith(title: "Next", fontSize: 20, titleColor: .customBlue)
+        button.configureWith(fontSize: 30, titleColor: .customBlue, image: UIImage(systemName: "plus"))
+        button.addAction(UIAction(handler: { [weak self] action in
+            self?.photoPickerHandler?.showPhotoPicker()
+            print("add")
+        }), for: .touchUpInside)
         return button
     }()
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .gray
+        imageView.clipsToBounds = true
+        imageView.sizeToFit()
+        imageView.image = UIImage(named: "nophoto")
         return imageView
     }()
     private lazy var recentsStackView: UIStackView = {
@@ -92,6 +97,10 @@ class AddPostVC: UIViewController {
         view.backgroundColor = .black
         navigationController?.isNavigationBarHidden = true
         setupUI()
+        photoPickerHandler = PhotoPickerHandler(presentingViewController: self)
+           photoPickerHandler?.onImageSelected = { [weak self] image in
+               self?.imageView.image = image
+        }
     }
     
     private func setupUI() {
@@ -102,32 +111,28 @@ class AddPostVC: UIViewController {
     private func setupViews() {
         view.addSubview(dismissButton)
         view.addSubview(titleLabel)
-        view.addSubview(nextButton)
+        view.addSubview(AddButton)
         view.addSubview(photoView)
-        photoView.addSubview(scrollView)
-        scrollView.addSubview(imageView)
+        photoView.addSubview(imageView)
         photoView.addSubview(recentsStackView)
         photoView.addSubview(photoButton)
         photoView.addSubview(multipleImageButton)
         view.addSubview(collectionView)
     }
-    
+
     private func setupConstraints() {
-        
-        imageView.image = UIImage(named: "Rectangle")
         NSLayoutConstraint.activate([
-            
             photoView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             photoView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10),
             photoView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
             photoView.heightAnchor.constraint(equalToConstant: 400),
             
-            scrollView.topAnchor.constraint(equalTo: photoView.topAnchor),
-            scrollView.leftAnchor.constraint(equalTo: photoView.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: photoView.rightAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -50),
+            imageView.topAnchor.constraint(equalTo: photoView.topAnchor),
+            imageView.leftAnchor.constraint(equalTo: photoView.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: photoView.rightAnchor),
+            imageView.bottomAnchor.constraint(equalTo: photoView.bottomAnchor, constant: -50),
             
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -10),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.heightAnchor.constraint(equalToConstant: 30),
             
@@ -135,20 +140,14 @@ class AddPostVC: UIViewController {
             dismissButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10),
             dismissButton.heightAnchor.constraint(equalTo: titleLabel.heightAnchor, multiplier: 1),
             
-            nextButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
-            nextButton.topAnchor.constraint(equalTo: titleLabel.topAnchor),
-            nextButton.heightAnchor.constraint(equalTo: titleLabel.heightAnchor),
-            
-            
-            imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            imageView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
-            imageView.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
-            
+            AddButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
+            AddButton.topAnchor.constraint(equalTo: titleLabel.topAnchor),
+            AddButton.heightAnchor.constraint(equalTo: titleLabel.heightAnchor, multiplier: 1),
+
             recentsStackView.leftAnchor.constraint(equalTo: photoView.leftAnchor),
-            recentsStackView.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 15),
+            recentsStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 15),
             
-            photoButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
+            photoButton.rightAnchor.constraint(equalTo: imageView.rightAnchor),
             photoButton.topAnchor.constraint(equalTo: recentsStackView.topAnchor),
             
             multipleImageButton.topAnchor.constraint(equalTo: recentsStackView.topAnchor),
@@ -159,6 +158,10 @@ class AddPostVC: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
+    }
+    
+    private func dismiss() {
+        imageView.image = UIImage(named: "nophoto")
     }
 }
 
