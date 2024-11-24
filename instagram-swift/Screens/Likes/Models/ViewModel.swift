@@ -43,5 +43,3 @@ class LikesViewModel {
         return data[key]?[indexPath.row]
     }
 }
-
-

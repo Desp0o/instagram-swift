@@ -1,10 +1,3 @@
-//
-//  LikesVC.swift
-//  instagram-swift
-//
-//  Created by Despo on 22.11.24.
-//
-
 import UIKit
 
 class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
@@ -38,14 +31,14 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         setupTopBar()
     }
     
-//    private func setupNavigationBar() {
-//        let titleLabel = UILabel()
-//        titleLabel.text = "You"
-//        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-//        titleLabel.textColor = .black
-//        titleLabel.textAlignment = .center
-//        navigationItem.titleView = titleLabel
-//    }
+    //    private func setupNavigationBar() {
+    //        let titleLabel = UILabel()
+    //        titleLabel.text = "You"
+    //        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+    //        titleLabel.textColor = .black
+    //        titleLabel.textAlignment = .center
+    //        navigationItem.titleView = titleLabel
+    //    }
     
     private func setupTopBar() {
         view.addSubview(topBar)
@@ -125,10 +118,11 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
             
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 10
+            section.interGroupSpacing = -15
             
-            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(40))
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(20))
             let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+            
             section.boundarySupplementaryItems = [header]
             
             return section
@@ -160,9 +154,17 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         header.titleLabel.text = viewModel.sections[indexPath.section]
         return header
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
+    }
+    
 }
 
 #Preview {
     LikesVC()
 }
-
