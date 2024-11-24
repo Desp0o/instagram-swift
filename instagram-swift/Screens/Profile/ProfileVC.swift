@@ -9,6 +9,8 @@ import UIKit
 
 class ProfileVC: UIViewController {
     
+    private var viewModel = ProfileViewModel()
+    
     private lazy var userNameViewWithIcon: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -19,7 +21,7 @@ class ProfileVC: UIViewController {
     private lazy var userName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.configureCustomText(text: "jacob_w", color: .black, isBold: true, size: 16)
+        label.configureCustomText(text: "", color: .black, isBold: true, size: 16)
         
         return label
     }()
@@ -29,7 +31,7 @@ class ProfileVC: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "homeActive")
         imageView.contentMode = .scaleAspectFit
-
+        
         return imageView
     }()
     
@@ -81,7 +83,7 @@ class ProfileVC: UIViewController {
     private lazy var numberOfpostLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.configureCustomText(text: "54", color: .black, isBold: true, size: 16)
+        label.configureCustomText(text: "14", color: .black, isBold: true, size: 16)
         
         return label
     }()
@@ -127,7 +129,7 @@ class ProfileVC: UIViewController {
     private lazy var numberOfFollowigLable: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.configureCustomText(text: "126", color: .black, isBold: true, size: 16)
+        label.configureCustomText(text: "162", color: .black, isBold: true, size: 16)
         
         return label
     }()
@@ -154,7 +156,7 @@ class ProfileVC: UIViewController {
     private lazy var fullNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.configureCustomText(text: "Jacob West", color: .black, isBold: true, size: 12)
+        label.configureCustomText(text: "", color: .black, isBold: true, size: 12)
         
         return label
     }()
@@ -162,7 +164,7 @@ class ProfileVC: UIViewController {
     private lazy var linkLabel: UILabel = {
         let linkLabel = UILabel()
         linkLabel.translatesAutoresizingMaskIntoConstraints = false
-        linkLabel.configureCustomText(text: "Digital goodies designer @pixsellz", color: .black, isBold: false, size: 12)
+        linkLabel.configureCustomText(text: "", color: .black, isBold: false, size: 12)
         
         return linkLabel
     }()
@@ -170,7 +172,7 @@ class ProfileVC: UIViewController {
     private lazy var bioLabel: UILabel = {
         let biolabel = UILabel()
         biolabel.translatesAutoresizingMaskIntoConstraints = false
-        biolabel.configureCustomText(text: "Everything is designed.", color: .black, isBold: false, size: 12)
+        biolabel.configureCustomText(text: "", color: .black, isBold: false, size: 12)
         
         return biolabel
     }()
@@ -202,7 +204,7 @@ class ProfileVC: UIViewController {
         
         layout.minimumLineSpacing = padding
         layout.minimumInteritemSpacing = padding
-
+        
         let collectioView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectioView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -212,10 +214,20 @@ class ProfileVC: UIViewController {
         
         return collectioView
     }()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
+        setValuesToLabels()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        navigationController?.isNavigationBarHidden = true
+        editButtonAction()
+        viewModel.delegate = self
+        
         setupUI()
     }
     
@@ -244,7 +256,7 @@ class ProfileVC: UIViewController {
         bioStackView.addArrangedSubview(bioLabel)
         view.addSubview(editProfileButton)
         view.addSubview(postsCollectionView)
-    
+        
         setupConstraints()
     }
     
@@ -360,6 +372,20 @@ class ProfileVC: UIViewController {
         ])
         
     }
+    
+    private func editButtonAction() {
+        editProfileButton.addAction(UIAction(handler: { [weak self] _ in
+            let vc = ProfileSettingsVC()
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }), for: .touchUpInside)
+    }
+    
+    private func setValuesToLabels() {
+        userName.text = viewModel.username
+        fullNameLabel.text = viewModel.name
+        bioLabel.text = viewModel.bio
+        linkLabel.text = viewModel.link
+    }
 }
 
 extension ProfileVC: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -371,7 +397,7 @@ extension ProfileVC: UICollectionViewDelegate, UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PostCollectionViewCell", for: indexPath) as? PostCollectionViewCell else {
             return UICollectionViewCell()
         }
-
+        
         cell.postImage.load(url: URL(string: "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8=")!)
         cell.postImage.image = UIImage(systemName: "photo")
         
@@ -379,8 +405,10 @@ extension ProfileVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
 }
 
-
-#Preview {
-    ProfileVC()
+extension ProfileVC: ProfileViewModelDelegate {
+    func reloadData() {
+        DispatchQueue.main.async { [weak self] in
+            self?.reloadData()
+        }
+    }
 }
-
