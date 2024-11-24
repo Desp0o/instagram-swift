@@ -62,11 +62,14 @@ class CommentCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             avatar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
             avatar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            avatar.widthAnchor.constraint(equalToConstant: 24),
-            avatar.heightAnchor.constraint(equalToConstant: 24),
+            avatar.widthAnchor.constraint(equalToConstant: 36),
+            avatar.heightAnchor.constraint(equalToConstant: 36),
             
             commentStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            commentStack.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 10)
+            commentStack.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 10),
+            
+            userComment.leadingAnchor.constraint(equalTo: commentStack.leadingAnchor, constant: 0),
+            userComment.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
     }
     
@@ -74,7 +77,7 @@ class CommentCell: UICollectionViewCell {
         guard let url = URL(string: comment.profilePicture) else {  return }
         
         avatar.imageFrom(url: url)
-        avatar.layer.cornerRadius = 12
+        avatar.layer.cornerRadius = 18
         
         userName.configureCustomText(text: comment.username, color: .primaryBlack, isBold: true, size: 13)
         userComment.configureCustomText(text: comment.comment, color: .primaryBlack, isBold: false, size: 13)
