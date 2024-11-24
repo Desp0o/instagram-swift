@@ -64,7 +64,6 @@ class TabBarController: UITabBarController {
             inactiveIcon: "testUser",
             vc: ProfileVC()
         )
-        
         self.setViewControllers([feedVC, searchVC, addPost, favoriteVC, profileVC], animated: true)
     }
     

@@ -70,17 +70,19 @@ class AddPostVC: UIViewController {
         button.configureWith(image: UIImage(systemName: "square.on.square"))
         return button
     }()
-    
     private lazy var collectionView: UICollectionView = {
         let collection: UICollectionView
-        let collectionLayout = UICollectionViewFlowLayout()
-    
-        collectionLayout.itemSize = CGSize(width: view.frame.width, height: 50)
-        collectionLayout.minimumLineSpacing = 0
-        collection = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
+        let collectionViewLayout = UICollectionViewFlowLayout()
+        collectionViewLayout.scrollDirection = .vertical
+        collectionViewLayout.minimumLineSpacing = 0
+        collectionViewLayout.minimumInteritemSpacing = 0
+        collectionViewLayout.itemSize = CGSize(width: 95, height: 100)
+        collection = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .white
         collection.register(CollectionViewCell.self, forCellWithReuseIdentifier: "collectionView")
+        collection.dataSource = self
+        collection.delegate = self
         return collection
     }()
 
@@ -89,9 +91,6 @@ class AddPostVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         navigationController?.isNavigationBarHidden = true
-        navigationItem.largeTitleDisplayMode = .always
-        navigationItem.titleView = titleLabel
-    
         setupUI()
     }
     
@@ -163,24 +162,24 @@ class AddPostVC: UIViewController {
     }
 }
 
-//
-//struct viewControllerRepresentable: UIViewControllerRepresentable {
-//    typealias UIViewControllerType = AddPostVC
-//    
-//
-//    
-//    
-//    func makeUIViewController(context: Context) -> AddPostVC{
-//        AddPostVC()
-//    }
-//    
-//    func updateUIViewController(_ uiViewController: AddPostVC, context: Context) {
-//        
-//    }
-//}
-//
-//struct viewController_Previews: PreviewProvider {
-//    static var previews: some View {
-//        viewControllerRepresentable()
-//    }
-//}
+
+struct viewControllerRepresentable: UIViewControllerRepresentable {
+    typealias UIViewControllerType = AddPostVC
+    
+
+    
+    
+    func makeUIViewController(context: Context) -> AddPostVC{
+        AddPostVC()
+    }
+    
+    func updateUIViewController(_ uiViewController: AddPostVC, context: Context) {
+        
+    }
+}
+
+struct viewController_Previews: PreviewProvider {
+    static var previews: some View {
+        viewControllerRepresentable()
+    }
+}
