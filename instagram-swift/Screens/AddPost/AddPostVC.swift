@@ -163,18 +163,6 @@ class AddPostVC: UIViewController {
     }
 }
 
-extension UIButton {
-    func configureWith(title: String? = nil, fontSize: Int? = nil, titleColor: UIColor? = nil, image: UIImage? = nil, tintColor: UIColor? = .white) {
-        
-        self.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(fontSize ?? 20))
-        self.setTitle(title, for: .normal)
-        self.setTitleColor(titleColor, for: .normal)
-        self.translatesAutoresizingMaskIntoConstraints = false
-        self.tintColor = .white
-        self.setImage(image, for: .normal)
-    }
-}
-
 
 struct viewControllerRepresentable: UIViewControllerRepresentable {
     typealias UIViewControllerType = AddPostVC
