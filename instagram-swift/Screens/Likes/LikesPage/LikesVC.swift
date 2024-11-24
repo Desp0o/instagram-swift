@@ -3,6 +3,7 @@ import UIKit
 class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     private let topBar = UIView()
     private let barTitle = UILabel()
+    private let bottomLine = UIView()
     
     private lazy var collectionView: UICollectionView = {
         let layout = createLayout()
@@ -16,7 +17,6 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     var headerlabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.configureCustomText(text: "You", color: .black, isBold: true, size: 16)
         
         return label
     }()
@@ -36,8 +36,6 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         view.addSubview(lineView)
         
         setupUI()
-        //setupNavigationBar()
-        setupCollectionView()
         bindViewModel()
         viewModel.fetchData()
     }
@@ -47,16 +45,10 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         navigationController?.isNavigationBarHidden = true
         
         setupTopBar()
+        setupTopBarTitle()
+        setUpNavBarBottomLine()
+        setupCollectionView()
     }
-    
-    //    private func setupNavigationBar() {
-    //        let titleLabel = UILabel()
-    //        titleLabel.text = "You"
-    //        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-    //        titleLabel.textColor = .black
-    //        titleLabel.textAlignment = .center
-    //        navigationItem.titleView = titleLabel
-    //    }
     
      private func setupTopBar() {
         view.addSubview(topBar)
@@ -70,33 +62,6 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             topBar.heightAnchor.constraint(equalToConstant: 112)
         ])
-        
-        NSLayoutConstraint.activate([
-            headerlabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerlabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
-        
-        NSLayoutConstraint.activate([
-            lineView.topAnchor.constraint(equalTo: headerlabel.bottomAnchor, constant: 10),
-            lineView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            lineView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: 0.5)
-        ])
-        
-        let bottomLine = UIView()
-        bottomLine.backgroundColor = UIColor.secondaryGray
-        bottomLine.translatesAutoresizingMaskIntoConstraints = false
-        
-        topBar.addSubview(bottomLine)
-        
-        NSLayoutConstraint.activate([
-            bottomLine.leadingAnchor.constraint(equalTo: topBar.leadingAnchor),
-            bottomLine.trailingAnchor.constraint(equalTo: topBar.trailingAnchor),
-            bottomLine.bottomAnchor.constraint(equalTo: topBar.bottomAnchor),
-            bottomLine.heightAnchor.constraint(equalToConstant: 1)
-        ])
-        
-        //setupTopBarTitle()
     }
     
     private func setupTopBarTitle() {
@@ -111,8 +76,23 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         NSLayoutConstraint.activate([
             barTitle.centerXAnchor.constraint(equalTo: topBar.centerXAnchor),
-            barTitle.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -12)
+            barTitle.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -30)
         ])
+    }
+    
+    private func setUpNavBarBottomLine() {
+        topBar.addSubview(bottomLine)
+        bottomLine.backgroundColor = UIColor.secondaryGray
+        bottomLine.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            bottomLine.leftAnchor.constraint(equalTo: topBar.leftAnchor),
+            bottomLine.rightAnchor.constraint(equalTo: topBar.rightAnchor),
+            bottomLine.bottomAnchor.constraint(equalTo: topBar.bottomAnchor),
+            bottomLine.heightAnchor.constraint(equalToConstant: 0.5)
+        ])
+        
+        topBar.bringSubviewToFront(bottomLine)
     }
     
     private func setupCollectionView() {
@@ -129,7 +109,7 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         headerContainer.addSubview(lineView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: 50),
+            collectionView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -142,10 +122,10 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             headerlabel.centerXAnchor.constraint(equalTo: headerContainer.centerXAnchor),
             headerlabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 8),
             
-            lineView.topAnchor.constraint(equalTo: headerlabel.bottomAnchor, constant: 8),
-            lineView.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
-            lineView.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: 0.5)
+//            lineView.topAnchor.constraint(equalTo: headerlabel.bottomAnchor, constant: 8),
+//            lineView.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
+//            lineView.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
+//            lineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
     
