@@ -8,7 +8,6 @@
 import UIKit
 
 final class SearchVC: UIViewController {
-    
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.translatesAutoresizingMaskIntoConstraints = false
@@ -26,10 +25,13 @@ final class SearchVC: UIViewController {
         return collectionView
     }()
     
+    private let viewModel = FeedViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        setupViewModel()
     }
     
     private func setupUI() {
@@ -46,15 +48,17 @@ final class SearchVC: UIViewController {
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            searchBar.heightAnchor.constraint(equalToConstant: 36)
-        ])
-        
-        NSLayoutConstraint.activate([
+            searchBar.heightAnchor.constraint(equalToConstant: 36),
+            
             searchCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 19),
             searchCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    private func setupViewModel() {
+        viewModel.delegate = self
     }
     
     private func createLayout() -> UICollectionViewLayout {
@@ -90,13 +94,25 @@ final class SearchVC: UIViewController {
     }
 }
 
+extension SearchVC: FeedViewModelDelegate {
+    func didFinishFetchingData() {
+        DispatchQueue.main.async { [weak self] in
+            self?.searchCollectionView.reloadData()
+        }
+    }
+}
+
 extension SearchVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        return viewModel.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchCollectionViewCell.identifier, for: indexPath) as? SearchCollectionViewCell else { return UICollectionViewCell() }
+        if let post = viewModel.singlePost(with: indexPath.row) {
+            cell.configureSearchCollectionViewCell(with: post)
+        }
+        
         return cell
     }
 }
