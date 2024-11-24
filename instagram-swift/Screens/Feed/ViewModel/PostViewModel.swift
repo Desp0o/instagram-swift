@@ -108,17 +108,20 @@ final class PostViewModel {
     }
     
     func likePost(postId: Int, isLiked: Bool) {
-            var posts = loadPostsFromUserDefaults()
-            
-            if let index = posts.firstIndex(where: { $0.postId == postId }) {
-                posts[index].isLiked = isLiked
+        var posts = loadPostsFromUserDefaults()
+        
+        if let index = posts.firstIndex(where: { $0.postId == postId }) {
+            if posts[index].isLiked == isLiked {
+                posts.remove(at: index)
             } else {
-                posts.append(Post(postId: postId, isLiked: isLiked))
+                posts[index].isLiked = isLiked
             }
-            
-            savePostsToUserDefaults(posts: posts)
+        } else {
+            posts.append(Post(postId: postId, isLiked: isLiked))
         }
-    
+        print(posts)
+        savePostsToUserDefaults(posts: posts)
+    }
     
 }
 

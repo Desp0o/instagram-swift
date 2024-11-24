@@ -10,7 +10,6 @@ import Foundation
 
 class CustomPostView: UIView {
     var model: PostModel?
-    private var isLiked: Bool = false
     
     private let postViewModel: PostViewModel
     
@@ -311,6 +310,7 @@ class CustomPostView: UIView {
         setupTabUserAvatar()
         setupConstraints()
         setupLastLikedStack()
+        collection.reloadData()
     }
     
     private func setupConstraints() {
@@ -375,12 +375,15 @@ class CustomPostView: UIView {
     }
     
     private func likePost() {
-        isLiked.toggle()
-        print(isLiked)
-        likeButton.setImage(UIImage(named: isLiked ? "heartActive" : "heartInactive"), for: .normal)
+        guard var currentModel = model else { return }
         
-        guard let model = model else { return }
-        postViewModel.likePost(postId: model.postId, isLiked: !model.isLiked)
+        currentModel.isLiked.toggle()
+        
+        likeButton.setImage(UIImage(named: currentModel.isLiked ? "heartActive" : "heartInactive"), for: .normal)
+
+        postViewModel.likePost(postId: currentModel.postId, isLiked: currentModel.isLiked)
+        
+        model = currentModel
     }
     
     private func navigateToDetails() {
@@ -391,7 +394,6 @@ class CustomPostView: UIView {
         if viewController is DetailsVC { return }
         viewController.navigationController?.pushViewController(DetailsVC(model: model), animated: true)
     }
-    
     
     private func share(post: PostModel) {
         var activityItems: [Any] = []
@@ -406,7 +408,6 @@ class CustomPostView: UIView {
             viewController.present(activityViewController, animated: true)
         }
     }
-    
     
     private func setupBulletStack() {
         bulletsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -482,12 +483,16 @@ class CustomPostView: UIView {
         location.text = model.location
         lastLikedName.text = model.likes.lastLikedBy
         likeCount.text = "\(model.likes.likeCounts)"
-        isLiked = model.isLiked
         
-        likeButton.setImage(UIImage(
-            named: model.isLiked ? "heartActive" : "heartInactive"),
-            for: .normal
-        )
+        let likedPosts = postViewModel.loadPostsFromUserDefaults()
+
+            
+            let isLiked = likedPosts.first(where: { $0.postId == model.postId })?.isLiked ?? model.isLiked
+
+            likeButton.setImage(UIImage(
+                named: isLiked ? "heartActive" : "heartInactive"),
+                for: .normal
+            )
         
         postDescription.configureCustomText(
             text: model.description,

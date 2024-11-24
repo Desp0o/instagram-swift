@@ -86,7 +86,7 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            topBar.heightAnchor.constraint(equalToConstant: 112),
+            topBar.heightAnchor.constraint(equalToConstant: 132),
             
             collection.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 0),
             collection.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
