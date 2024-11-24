@@ -13,9 +13,27 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     private let viewModel = LikesViewModel()
     
+    var headerlabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.configureCustomText(text: "You", color: .black, isBold: true, size: 16)
+        
+        return label
+    }()
+    
+    var lineView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .secondaryGray
+        
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        view.addSubview(headerlabel)
+        view.addSubview(lineView)
         
         setupUI()
         //setupNavigationBar()
@@ -40,17 +58,29 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     //        navigationItem.titleView = titleLabel
     //    }
     
-    private func setupTopBar() {
+     private func setupTopBar() {
         view.addSubview(topBar)
         topBar.translatesAutoresizingMaskIntoConstraints = false
         
         topBar.backgroundColor = .tabBarCol
-        
+    
         NSLayoutConstraint.activate([
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             topBar.heightAnchor.constraint(equalToConstant: 112)
+        ])
+        
+        NSLayoutConstraint.activate([
+            headerlabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerlabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            lineView.topAnchor.constraint(equalTo: headerlabel.bottomAnchor, constant: 10),
+            lineView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            lineView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            lineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
         
         let bottomLine = UIView()
@@ -66,7 +96,7 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             bottomLine.heightAnchor.constraint(equalToConstant: 1)
         ])
         
-        setupTopBarTitle()
+        //setupTopBarTitle()
     }
     
     private func setupTopBarTitle() {
@@ -92,11 +122,30 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         collectionView.register(LikeCollectionViewCell.self, forCellWithReuseIdentifier: LikeCollectionViewCell.identifier)
         collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderView.identifier)
         
+        let headerContainer = UIView()
+        headerContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(headerContainer)
+        headerContainer.addSubview(headerlabel)
+        headerContainer.addSubview(lineView)
+        
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: headerContainer.bottomAnchor, constant: 50),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            headerContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            headerContainer.heightAnchor.constraint(equalToConstant: 50),
+            
+            headerlabel.centerXAnchor.constraint(equalTo: headerContainer.centerXAnchor),
+            headerlabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 8),
+            
+            lineView.topAnchor.constraint(equalTo: headerlabel.bottomAnchor, constant: 8),
+            lineView.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
+            lineView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
     
