@@ -39,7 +39,7 @@ class CustomPostView: UIView {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.clipsToBounds = true
-        
+        image.contentMode = .scaleAspectFill
         return image
     }()
     
@@ -71,7 +71,7 @@ class CustomPostView: UIView {
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = .white
         image.image = UIImage(named: "Rectangle")
-        image.contentMode = .scaleToFill
+        image.contentMode = .scaleAspectFill
         
         return image
     }()
