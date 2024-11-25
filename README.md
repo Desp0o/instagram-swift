@@ -53,7 +53,7 @@ Instagram is an iOS social networking application where users can sign in, have 
 
 - Tornike Desporashvili – Led the team, assigned responsibilities, and planned the work process. Tornike was responsible for creating the navigation, feed page, post detail page, viewing comments, and favoriting posts. He actively assisted team members with bug fixes, contributed to code refactoring, merged the project, resolved merge conflicts, and ensured smooth functionality during the final merge by fixing bugs.
 
-- Nino Dimitriadze – Worked extensively on the Profile Page and Edit Profile Page, allowing users to view their profile and posts. Through the Edit Profile Page, users could change and update their personal information. Nino participated in fixing the TabBar and Notification pages. She contributed to identifying and fixing code bugs and actively worked on code refactoring to improve the code structure. Nino also provided technical support to other team members in resolving issues.
+- Nino Dimitriadi – Worked extensively on the Profile Page and Edit Profile Page, allowing users to view their profile and posts. Through the Edit Profile Page, users could change and update their personal information. Nino participated in fixing the TabBar and Notification pages. She contributed to identifying and fixing code bugs and actively worked on code refactoring to improve the code structure. Nino also provided technical support to other team members in resolving issues.
 
 - Iliko Kukava – Was responsible for working with Mockoon, setting up and managing several APIs for different pages. Iliko also actively helped team members resolve various issues.
 
