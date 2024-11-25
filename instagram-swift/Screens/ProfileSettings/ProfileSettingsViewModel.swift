@@ -9,10 +9,10 @@ import Foundation
 
 class ProfileSettingsViewModel {
     
-    private let nameKey = "Jacob West"
-    private let usernameKey = "Jacob_w"
-    private let bioKey = "Everything is designed"
-    private let linksKey = "Digital goodies designer @pixsellz"
+    private let nameKey = "nameKey"
+    private let usernameKey = "usernameKey"
+    private let bioKey = "bioKey"
+    private let linksKey = "linksKey"
     
     var name: String
     var username: String

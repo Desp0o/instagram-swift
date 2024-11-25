@@ -1,37 +1,54 @@
 //
-//  FeedViewModel.swift
+//  ProfileViewModel.swift
 //  instagram-swift
 //
-//  Created by Despo on 22.11.24.
+//  Created by nino on 11/24/24.
 //
 
+import Foundation
 import NetworkManagerFramework
 import izziDateFormatter
-import Foundation
 
-protocol FeedViewModelDelegate: AnyObject {
+protocol ProfileViewModelDelegate: AnyObject {
+    func reloadData()
     func didFinishFetchingData()
 }
 
-final class PostViewModel {
+class ProfileViewModel {
+    
+    weak var delegate: ProfileViewModelDelegate?
+    
     private let networkService: NetworkServiceProtocol
     private let dateFormatter: IzziDateFormatterProtocol
     var allPostsData: [PostModel] = []
     var singlePost: PostModel?
-    
-    weak var delegate: FeedViewModelDelegate?
-    
-    var likedPostsArray: [Post] {
-        let arrary = loadPostsFromUserDefaults()
-        
-        return arrary
-    }
     
     init(networkService: NetworkServiceProtocol = NetworkService(), dateFormatter: IzziDateFormatterProtocol = IzziDateFormatter()) {
         self.networkService = networkService
         self.dateFormatter = dateFormatter
         
         fetchData()
+    }
+    
+    private let nameKey = "nameKey"
+    private let usernameKey = "usernameKey"
+    private let bioKey = "bioKey"
+    private let linksKey = "linksKey"
+    
+    var name: String {
+        return UserDefaults.standard.string(forKey: nameKey) ?? "Jacob West"
+    }
+    
+    var username: String {
+        return UserDefaults.standard.string(forKey: usernameKey) ?? "Jacob_w"
+    }
+    
+    var bio: String {
+        return UserDefaults.standard.string(forKey: bioKey) ?? "Everything is designed"
+    }
+    
+    var link: String {
+        return UserDefaults.standard.string(forKey: linksKey) ?? "Digital goodies designer @pixsellz"
     }
     
     func fetchData() {
@@ -103,18 +120,16 @@ final class PostViewModel {
     }
     
     func likePost(postId: Int, isLiked: Bool) {
-        var posts = loadPostsFromUserDefaults()
-        
-        if let index = posts.firstIndex(where: { $0.postId == postId }) {
-            if posts[index].isLiked != isLiked {
+            var posts = loadPostsFromUserDefaults()
+            
+            if let index = posts.firstIndex(where: { $0.postId == postId }) {
                 posts[index].isLiked = isLiked
+            } else {
+                posts.append(Post(postId: postId, isLiked: isLiked))
             }
-        } else {
-            posts.append(Post(postId: postId, isLiked: isLiked))
+            
+            savePostsToUserDefaults(posts: posts)
         }
-        
-        print(posts)
-        savePostsToUserDefaults(posts: posts)
-    }
+    
 }
 

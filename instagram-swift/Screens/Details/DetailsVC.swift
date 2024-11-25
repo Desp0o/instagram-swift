@@ -10,6 +10,20 @@ import UIKit
 class DetailsVC: UIViewController {
     var customView: CustomPostView
     var model: PostModel
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
+        return scrollView
+    }()
+    
+    private lazy var containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
 
     private lazy var postView: UIView = {
         let view = UIView()
@@ -70,21 +84,22 @@ class DetailsVC: UIViewController {
     }
     
     private func setupUI() {
+        view.backgroundColor = .white
         navigationController?.isNavigationBarHidden = true
-
-        view.addSubview(topBar)
-        view.addSubview(postView)
-        view.addSubview(customView)
+        view.addSubview(scrollView)
         
+        view.addSubview(topBar)
         topBar.addSubview(bottomLine)
         topBar.addSubview(barTitle)
         topBar.addSubview(backButton)
-        view.bringSubviewToFront(topBar)
+        
+        scrollView.addSubview(containerView)
+        containerView.addSubview(customView)
         customView.setupView(with: model)
-
+        
         postView = customView
         postView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         setupConstraints()
         setupButtonAction()
     }
@@ -94,32 +109,46 @@ class DetailsVC: UIViewController {
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topBar.topAnchor.constraint(equalTo: view.topAnchor),
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topBar.heightAnchor.constraint(equalToConstant: 112),
+            topBar.heightAnchor.constraint(equalToConstant: 132),
 
-            postView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            postView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
-            postView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            postView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
             bottomLine.leadingAnchor.constraint(equalTo: topBar.leadingAnchor),
             bottomLine.trailingAnchor.constraint(equalTo: topBar.trailingAnchor),
             bottomLine.bottomAnchor.constraint(equalTo: topBar.bottomAnchor),
             bottomLine.heightAnchor.constraint(equalToConstant: 1),
-            
+
             barTitle.centerXAnchor.constraint(equalTo: topBar.centerXAnchor),
             barTitle.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -12),
-            
+
             backButton.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -12),
             backButton.leadingAnchor.constraint(equalTo: topBar.leadingAnchor, constant: 15),
             backButton.widthAnchor.constraint(equalToConstant: 24),
-            backButton.heightAnchor.constraint(equalToConstant: 24)
+            backButton.heightAnchor.constraint(equalToConstant: 24),
+
+            scrollView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            postView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            postView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            postView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            postView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+
+            postView.heightAnchor.constraint(equalToConstant: 610),
         ])
     }
-    
+
     private func setupButtonAction() {
         backButton.addAction(UIAction(handler: {[weak self] _ in
             self?.navigationController?.popViewController(animated: true)
         }), for: .touchUpInside)
     }
-    
 }
+
+

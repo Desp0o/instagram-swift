@@ -69,6 +69,10 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
         setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        collection.reloadData()
+    }
+    
     private func setupUI() {
         view.backgroundColor = .white
         navigationController?.isNavigationBarHidden = true
@@ -86,12 +90,12 @@ class FeedVC: UIViewController, FeedViewModelDelegate {
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            topBar.heightAnchor.constraint(equalToConstant: 112),
+            topBar.heightAnchor.constraint(equalToConstant: 132),
             
             collection.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 0),
             collection.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             collection.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 50),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             
             bottomLine.leadingAnchor.constraint(equalTo: topBar.leadingAnchor),
             bottomLine.trailingAnchor.constraint(equalTo: topBar.trailingAnchor),

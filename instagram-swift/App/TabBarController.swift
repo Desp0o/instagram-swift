@@ -60,10 +60,15 @@ class TabBarController: UITabBarController {
         )
         
         let profileVC = configureTab(
-            activeIcon: "testUser",
-            inactiveIcon: "testUser",
+            activeIcon: "profilePicture",
+            inactiveIcon: "profilePicture",
             vc: ProfileVC()
         )
+        if let profileImage = UIImage(named: "profilePicture") {
+            let circularImage = makeCircularImage(image: profileImage, size: CGSize(width: 30, height: 30))
+            profileVC.tabBarItem.image = circularImage?.withRenderingMode(.alwaysOriginal)
+            profileVC.tabBarItem.selectedImage = circularImage?.withRenderingMode(.alwaysOriginal)
+        }
         self.setViewControllers([feedVC, searchVC, addPost, favoriteVC, profileVC], animated: true)
     }
     
@@ -73,5 +78,17 @@ class TabBarController: UITabBarController {
         tab.tabBarItem.selectedImage = UIImage(named: activeIcon)
         tab.tabBarItem.image = UIImage(named: inactiveIcon)
         return tab
+    }
+}
+
+
+extension TabBarController {
+    private func makeCircularImage(image: UIImage, size: CGSize) -> UIImage? {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let bounds = CGRect(origin: .zero, size: size)
+            UIBezierPath(ovalIn: bounds).addClip()
+            image.draw(in: bounds)
+        }
     }
 }
