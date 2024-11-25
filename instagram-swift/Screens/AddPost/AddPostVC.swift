@@ -10,6 +10,7 @@ import SwiftUI
 
 class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    var recentPhotos = RecentPhotos()
     private var photoPickerHandler: PhotoPickerHandler?
     
     private lazy var photoView: UIView = {
@@ -24,7 +25,7 @@ class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
             self?.dismiss()
         }), for: .touchUpInside)
         return button
-    
+        
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -52,17 +53,17 @@ class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
     private lazy var recentsStackView: UIStackView = {
         let label = UILabel()
         label.configureCustomText(text: "Recent", color: .white, isBold: true, size: 16)
-    
+        
         let chevronImageView = UIImageView()
         chevronImageView.image = UIImage(systemName: "chevron.right")
         chevronImageView.tintColor = .white
         chevronImageView.contentMode = .scaleAspectFit
-
+        
         let stackView = UIStackView(arrangedSubviews: [label, chevronImageView])
         stackView.axis = .horizontal
         stackView.spacing = 5
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         return stackView
     }()
     private lazy var photoButton: UIButton = {
@@ -79,27 +80,40 @@ class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
         let collection: UICollectionView
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
-        collectionViewLayout.minimumLineSpacing = 0
+        collectionViewLayout.minimumLineSpacing = 3
         collectionViewLayout.minimumInteritemSpacing = 0
-        collectionViewLayout.itemSize = CGSize(width: 95, height: 100)
+        collectionViewLayout.itemSize = CGSize(width: view.frame.width / 4, height: 100)
         collection = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.backgroundColor = .white
+        collection.backgroundColor = .black
         collection.register(CollectionViewCell.self, forCellWithReuseIdentifier: "collectionView")
         collection.dataSource = self
         collection.delegate = self
         return collection
     }()
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         navigationController?.isNavigationBarHidden = true
         setupUI()
+        updateRecentPhotos()
+        photoPickerUpdate()
+    }
+    
+    private func updateRecentPhotos() {
+        recentPhotos.photosFromGallery { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+    }
+    
+    private func photoPickerUpdate() {
         photoPickerHandler = PhotoPickerHandler(presentingViewController: self)
-           photoPickerHandler?.onImageSelected = { [weak self] image in
-               self?.imageView.image = image
+        photoPickerHandler?.onImageSelected = { [weak self] image in
+            self?.imageView.image = image
         }
     }
     
@@ -119,7 +133,7 @@ class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
         photoView.addSubview(multipleImageButton)
         view.addSubview(collectionView)
     }
-
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             photoView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
@@ -143,7 +157,7 @@ class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
             AddButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
             AddButton.topAnchor.constraint(equalTo: titleLabel.topAnchor),
             AddButton.heightAnchor.constraint(equalTo: titleLabel.heightAnchor, multiplier: 1),
-
+            
             recentsStackView.leftAnchor.constraint(equalTo: photoView.leftAnchor),
             recentsStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 15),
             
@@ -168,9 +182,6 @@ class AddPostVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
 
 struct viewControllerRepresentable: UIViewControllerRepresentable {
     typealias UIViewControllerType = AddPostVC
-    
-
-    
     
     func makeUIViewController(context: Context) -> AddPostVC{
         AddPostVC()

@@ -9,11 +9,10 @@ import UIKit
 
 class CollectionViewCell: UICollectionViewCell {
     
-    private lazy var photo: UIImageView = {
+    var photo: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.image = UIImage(named: "Rectangle")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -33,12 +32,12 @@ class CollectionViewCell: UICollectionViewCell {
     
     private func imageConstraints() {
         contentView.addSubview(photo)
-
+        
         NSLayoutConstraint.activate([
-            photo.topAnchor.constraint(equalTo: contentView.topAnchor),
-            photo.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            photo.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            photo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            photo.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2),
+            photo.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 2),
+            photo.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -2),
+            photo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 2)
         ])
     }
 }
