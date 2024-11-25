@@ -64,13 +64,11 @@ class TabBarController: UITabBarController {
             inactiveIcon: "profilePicture",
             vc: ProfileVC()
         )
-        
         if let profileImage = UIImage(named: "profilePicture") {
             let circularImage = makeCircularImage(image: profileImage, size: CGSize(width: 30, height: 30))
             profileVC.tabBarItem.image = circularImage?.withRenderingMode(.alwaysOriginal)
             profileVC.tabBarItem.selectedImage = circularImage?.withRenderingMode(.alwaysOriginal)
         }
-        
         self.setViewControllers([feedVC, searchVC, addPost, favoriteVC, profileVC], animated: true)
     }
     

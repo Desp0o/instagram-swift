@@ -9,12 +9,11 @@ import UIKit
 
 class LoginVC: UIViewController {
     
-    private lazy var instagramLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.configureCustomText(text: "Instagram", color: .primaryBlack, isBold: false, size: 50)
-        label.font = UIFont(name: "HoeflerText-Italic", size: 50)
-        return label
+    private lazy var instagramLogo: UIImageView = {
+        let instagramImage = UIImageView()
+        instagramImage.image = UIImage(named: "logo")
+        instagramImage.translatesAutoresizingMaskIntoConstraints = false
+        return instagramImage
     }()
     private lazy var usernameTextField: UITextField = {
         let textField = UITextField()
@@ -38,19 +37,13 @@ class LoginVC: UIViewController {
     }()
     private lazy var forgottenPasswordbutton: UIButton = {
         let button = UIButton()
-        button.setTitle("Forgotten password ?", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(.customBlue, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .heavy)
+        button.configureWith(title: "Forgotten password ?", fontSize: 13, titleColor: .customBlue)
         return button
     }()
     private lazy var loginButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Log in", for: .normal)
-        button.titleLabel?.textAlignment = .center
+        button.configureWith(title: "Log in", backgroundColor: .customBlue)
         button.layer.cornerRadius = 5
-        button.backgroundColor = .customBlue
         button.addAction(UIAction(handler: { [weak self] action in
             self?.loginTapped()
         }), for: .touchUpInside)
@@ -70,19 +63,13 @@ class LoginVC: UIViewController {
     }()
     private lazy var orLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "OR"
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .systemGray2
+        label.configureCustomText(text: "OR", color: .systemGray2, isBold: false, size: 14)
         return label
     }()
     private lazy var facebookLoginButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Log in with Facebook", for: .normal)
-        button.setImage(UIImage(systemName: "person.circle"), for: .normal)
+        button.configureWith(title: "Log in with Facebook", titleColor: .customBlue)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
-        button.setTitleColor(.customBlue, for: .normal)
         return button
     }()
     private lazy var divider: UIView = {
@@ -98,10 +85,7 @@ class LoginVC: UIViewController {
     }()
     private lazy var signupButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Sign up", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(.customBlue, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.configureWith(title: "Sign up", fontSize: 14, titleColor: .customBlue)
         return button
     }()
     
@@ -119,7 +103,7 @@ class LoginVC: UIViewController {
     }
     
     private func addingViews() {
-        view.addSubview(instagramLabel)
+        view.addSubview(instagramLogo)
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
         view.addSubview(forgottenPasswordbutton)
@@ -136,12 +120,15 @@ class LoginVC: UIViewController {
     private func setupConstraints() {
         
         NSLayoutConstraint.activate([
-            instagramLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            instagramLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 20),
+            instagramLogo.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 20),
+            instagramLogo.heightAnchor.constraint(equalToConstant: 85),
+            instagramLogo.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 50),
+            instagramLogo.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -50),
+            
              
             usernameTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
             usernameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
-            usernameTextField.topAnchor.constraint(equalTo: instagramLabel.bottomAnchor, constant: 30),
+            usernameTextField.topAnchor.constraint(equalTo: instagramLogo.bottomAnchor, constant: 30),
             usernameTextField.heightAnchor.constraint(equalToConstant: 40),
             
             passwordTextField.leftAnchor.constraint(equalTo: usernameTextField.leftAnchor),
@@ -211,26 +198,5 @@ class LoginVC: UIViewController {
         usernameTextField.text = ""
         passwordTextField.text = ""
     }
-    
 }
 
-
-struct viewControllerRepresentable: UIViewControllerRepresentable {
-    
-    typealias UIViewControllerType = LoginVC
-    
-    
-    func makeUIViewController(context: Context) -> LoginVC {
-        LoginVC()
-    }
-    
-    func updateUIViewController(_ uiViewController: LoginVC, context: Context) {
-        
-    }
-}
-
-struct viewController_Previews: PreviewProvider {
-    static var previews: some View {
-        viewControllerRepresentable()
-    }
-}
