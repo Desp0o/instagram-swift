@@ -1,7 +1,7 @@
 import UIKit
 
 class LikesVC: UIViewController {
-    private let viewModel = LikesViewModel()
+    private let viewModel: LikesViewModel
 
     private lazy var topBar: UIView = {
         let bar = UIView()
@@ -65,6 +65,15 @@ class LikesVC: UIViewController {
         return view
     }()
     
+    init(viewModel: LikesViewModel = LikesViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -90,7 +99,6 @@ class LikesVC: UIViewController {
         
         setupConstraints()
         bindViewModel()
-        viewModel.fetchData()
     }
     
     private func setupConstraints() {
@@ -155,7 +163,7 @@ extension LikesVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel.numberOfSections()
+        return viewModel.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

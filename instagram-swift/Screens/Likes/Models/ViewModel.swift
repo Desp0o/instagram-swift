@@ -41,10 +41,9 @@ class LikesViewModel {
             }
         }
     }
-
     
-    func numberOfSections() -> Int {
-        return sections.count
+    var numberOfSections: Int {
+        sections.count
     }
     
     func numberOfItems(in section: Int) -> Int {
