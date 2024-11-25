@@ -39,7 +39,7 @@ class CustomPostView: UIView {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.clipsToBounds = true
-        
+        image.contentMode = .scaleAspectFill
         return image
     }()
     
