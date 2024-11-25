@@ -1,48 +1,47 @@
 import Foundation
+import NetworkManagerFramework
+
 
 class LikesViewModel {
-    var sections: [String] = ["New", "Today", "This Week", "This Month"]
+    private let networkService: NetworkServiceProtocol
     private(set) var data: [String: [LikeItem]] = [:]
-    
+
+    var sections: [String] = ["New", "Today", "This Week", "This Month"]    
     var onDataUpdated: (() -> Void)?
     var onError: ((Error) -> Void)?
     
+    init(networkService: NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
+        fetchData()
+    }
+    
     func fetchData() {
-        guard let url = URL(string: "http://localhost:3000/v1/users/self/media/liked") else {
-            print("Invalid URL")
-            return
-        }
+        let apiLink = "http://localhost:3000/v1/users/self/media/liked"
         
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            if let error = error {
-                DispatchQueue.main.async {
-                    self?.onError?(error)
-                }
-                return
-            }
-            
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    self?.onError?(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"]))
-                }
-                return
-            }
-            
+        Task {
             do {
-                let decodedData = try JSONDecoder().decode([String: [LikeItem]].self, from: data)
-                DispatchQueue.main.async {
-                    self?.data = decodedData
+                let fetchedData: [String: [LikeItem]] = try await networkService.fetchData(urlString: apiLink, headers: [:])
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.data = fetchedData
                     self?.onDataUpdated?()
                 }
+            } catch NetworkError.httpResponseError {
+                print("Response is not HTTPURLResponse or missing")
+            } catch NetworkError.invalidURL {
+                print("Invalid URL")
+            } catch NetworkError.statusCodeError(let statusCode) {
+                print("Unexpected status code: \(statusCode)")
+            } catch NetworkError.noData {
+                print("No data received from server")
+            } catch NetworkError.decodeError(let error) {
+                print("Decode error: \(error.localizedDescription)")
             } catch {
-                DispatchQueue.main.async {
-                    self?.onError?(error)
-                }
+                print("Unexpected error: \(error.localizedDescription)")
             }
         }
-        
-        task.resume()
     }
+
     
     func numberOfSections() -> Int {
         return sections.count

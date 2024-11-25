@@ -11,7 +11,7 @@ class CarouselCell: UICollectionViewCell {
     private lazy var image: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-
+        image.contentMode = .scaleAspectFill
         return image
     }()
     

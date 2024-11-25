@@ -1,27 +1,63 @@
 import UIKit
 
-class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-    private let topBar = UIView()
-    private let barTitle = UILabel()
-    private let bottomLine = UIView()
+class LikesVC: UIViewController {
+    private let viewModel = LikesViewModel()
+
+    private lazy var topBar: UIView = {
+        let bar = UIView()
+        bar.translatesAutoresizingMaskIntoConstraints = false
+        bar.backgroundColor = .tabBarCol
+        
+        return bar
+    }()
+    
+    private lazy var barTitle: UILabel = {
+        let label = UILabel()
+        label.configureCustomText(
+            text: "You",
+            color: .primaryBlack,
+            isBold: true,
+            size: 16
+        )
+        
+        return label
+    }()
+    
+    private lazy var bottomLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.secondaryGray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
     
     private lazy var collectionView: UICollectionView = {
         let layout = createLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(LikeCollectionViewCell.self, forCellWithReuseIdentifier: LikeCollectionViewCell.identifier)
+        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderView.identifier)
+        
         return collectionView
     }()
     
-    private let viewModel = LikesViewModel()
-    
-    var headerlabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+    private lazy var headerContainer: UIView = {
+        let headerContainer = UIView()
+        headerContainer.translatesAutoresizingMaskIntoConstraints = false
         
-        return label
+        return headerContainer
     }()
     
-    var lineView: UIView = {
+    private lazy var headerlabel: UILabel = {
+    let label = UILabel()
+    label.translatesAutoresizingMaskIntoConstraints = false
+    
+    return label
+}()
+    
+    private lazy var lineView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .secondaryGray
@@ -31,85 +67,48 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .white
         view.addSubview(headerlabel)
         view.addSubview(lineView)
+        view.addSubview(collectionView)
+        view.addSubview(headerContainer)
+        view.addSubview(topBar)
+
+        topBar.addSubview(bottomLine)
+        topBar.addSubview(barTitle)
+        
+        headerContainer.addSubview(headerlabel)
+        headerContainer.addSubview(lineView)
         
         setupUI()
-        bindViewModel()
-        viewModel.fetchData()
     }
     
     private func setupUI() {
         view.backgroundColor = .white
         navigationController?.isNavigationBarHidden = true
         
-        setupTopBar()
-        setupTopBarTitle()
-        setUpNavBarBottomLine()
-        setupCollectionView()
+        setupConstraints()
+        bindViewModel()
+        viewModel.fetchData()
     }
     
-     private func setupTopBar() {
-        view.addSubview(topBar)
-        topBar.translatesAutoresizingMaskIntoConstraints = false
-        
-        topBar.backgroundColor = .tabBarCol
-    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            topBar.heightAnchor.constraint(equalToConstant: 112)
-        ])
-    }
-    
-    private func setupTopBarTitle() {
-        topBar.addSubview(barTitle)
-        
-        barTitle.configureCustomText(
-            text: "You",
-            color: .primaryBlack,
-            isBold: true,
-            size: 16
-        )
-        
-        NSLayoutConstraint.activate([
+            topBar.heightAnchor.constraint(equalToConstant: 112),
+            
             barTitle.centerXAnchor.constraint(equalTo: topBar.centerXAnchor),
-            barTitle.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -30)
-        ])
-    }
-    
-    private func setUpNavBarBottomLine() {
-        topBar.addSubview(bottomLine)
-        bottomLine.backgroundColor = UIColor.secondaryGray
-        bottomLine.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
+            barTitle.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -6),
+            
             bottomLine.leftAnchor.constraint(equalTo: topBar.leftAnchor),
             bottomLine.rightAnchor.constraint(equalTo: topBar.rightAnchor),
             bottomLine.bottomAnchor.constraint(equalTo: topBar.bottomAnchor),
-            bottomLine.heightAnchor.constraint(equalToConstant: 0.5)
-        ])
-        
-        topBar.bringSubviewToFront(bottomLine)
-    }
-    
-    private func setupCollectionView() {
-        view.addSubview(collectionView)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(LikeCollectionViewCell.self, forCellWithReuseIdentifier: LikeCollectionViewCell.identifier)
-        collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderView.identifier)
-        
-        let headerContainer = UIView()
-        headerContainer.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(headerContainer)
-        headerContainer.addSubview(headerlabel)
-        headerContainer.addSubview(lineView)
-        
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
+            bottomLine.heightAnchor.constraint(equalToConstant: 0.5),
+            
+            collectionView.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 13),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -120,12 +119,7 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             headerContainer.heightAnchor.constraint(equalToConstant: 50),
             
             headerlabel.centerXAnchor.constraint(equalTo: headerContainer.centerXAnchor),
-            headerlabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 8),
-            
-//            lineView.topAnchor.constraint(equalTo: headerlabel.bottomAnchor, constant: 8),
-//            lineView.leadingAnchor.constraint(equalTo: headerContainer.leadingAnchor),
-//            lineView.trailingAnchor.constraint(equalTo: headerContainer.trailingAnchor),
-//            lineView.heightAnchor.constraint(equalToConstant: 0.5)
+            headerlabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 8)
         ])
     }
     
@@ -136,7 +130,9 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             }
         }
     }
-    
+}
+
+extension LikesVC: UICollectionViewDelegate, UICollectionViewDataSource {
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { (sectionIndex, environment) -> NSCollectionLayoutSection? in
             
@@ -191,9 +187,4 @@ class LikesVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
     }
-    
-}
-
-#Preview {
-    LikesVC()
 }
